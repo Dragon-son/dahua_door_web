@@ -1,0 +1,603 @@
+# device_client.py
+
+import datetime
+import time
+import base64
+import io
+import threading
+import requests
+from PIL import Image
+from requests.auth import HTTPDigestAuth
+import threading
+
+# 时区转换所需
+from datetime import timezone, timedelta
+
+from NetSDK.NetSDK import NetClient
+from NetSDK.SDK_Callback import fDisConnect, fHaveReConnect
+from NetSDK.SDK_Struct import *
+from NetSDK.SDK_Enum import *
+from ctypes import sizeof, cast, POINTER, pointer, byref, c_void_p
+
+METHOD_MAP = {
+    1: "刷卡", 2: "密码", 3: "卡+密码", 4: "指纹",
+    5: "远程开门", 6: "按钮开门", 16: "人脸识别",
+}
+
+
+def make_net_time(dt):
+    t = NET_TIME()
+    t.dwYear = dt.year
+    t.dwMonth = dt.month
+    t.dwDay = dt.day
+    t.dwHour = dt.hour
+    t.dwMinute = dt.minute
+    t.dwSecond = dt.second
+    return t
+
+
+def compress_image(path, max_kb=0, width=0, height=0, quality=0):
+    img = Image.open(path).convert("RGB")
+    if width > 0 and height > 0:
+        img = img.resize((width, height))
+    elif width > 0 or height > 0:
+        img.thumbnail((width or 9999, height or 9999))
+    q = quality if quality > 0 else 85
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", quality=q)
+    data = buf.getvalue()
+    if max_kb and len(data) > max_kb * 1024:
+        return data[:max_kb * 1024]
+    return data
+
+def call_with_timeout(func, timeout, *args, **kwargs):
+    """在单独线程中调用函数，若超时则抛出异常"""
+    result = [None]
+    exception = [None]
+    def target():
+        try:
+            result[0] = func(*args, **kwargs)
+        except Exception as e:
+            exception[0] = e
+    thread = threading.Thread(target=target)
+    thread.daemon = True
+    thread.start()
+    thread.join(timeout)
+    if thread.is_alive():
+        raise TimeoutError(f"操作超时 ({timeout}秒)")
+    if exception[0]:
+        raise exception[0]
+    return result[0]
+
+class DeviceClient:
+
+    def __init__(self, ip, port, username, password):
+        self.ip = ip
+        self.port = port
+        self.username = username
+        self.password = password
+
+        self.sdk = NetClient()
+        self.loginID = 0
+        self.lock = threading.Lock()
+        self.last_active = time.time()
+
+        self._init()
+        self._login()
+
+    def _init(self):
+        self.sdk.InitEx(fDisConnect(lambda *a: print(f"断线 {self.ip}")))
+        self.sdk.SetAutoReconnect(fHaveReConnect(lambda *a: print(f"重连 {self.ip}")))
+
+    def _login(self):
+        stuIn = NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY()
+        stuIn.dwSize = sizeof(stuIn)
+        stuIn.szIP = self.ip.encode()
+        stuIn.nPort = self.port
+        stuIn.szUserName = self.username.encode()
+        stuIn.szPassword = self.password.encode()
+        stuIn.emSpecCap = EM_LOGIN_SPAC_CAP_TYPE.TCP
+
+        stuOut = NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY()
+        stuOut.dwSize = sizeof(stuOut)
+
+        loginID, _, err = self.sdk.LoginWithHighLevelSecurity(stuIn, stuOut)
+        if loginID == 0:
+            raise Exception(f"登录失败: {err}")
+
+        self.loginID = loginID
+
+    def ensure(self):
+        if self.loginID == 0:
+            self._login()
+
+    # ================= 开门 =================
+    def open_door(self, channel=0):
+        with self.lock:
+            self.ensure()
+            ctrl = NET_CTRL_ACCESS_OPEN()
+            ctrl.dwSize = sizeof(ctrl)
+            ctrl.nChannelID = channel
+            ok = self.sdk.ControlDevice(self.loginID, CtrlType.ACCESS_OPEN, ctrl, 5000)
+            self.last_active = time.time()
+            if not ok:
+                raise Exception(self.sdk.GetLastErrorMessage())
+            return True
+
+    # ================= 人员管理 =================
+    def add_user(self, user_id, name):
+        with self.lock:
+            self.ensure()
+            user = NET_ACCESS_USER_INFO()
+            user.szUserID = user_id.encode()
+            user.szName = name.encode("utf-8")
+            user.nUserStatus = 0
+            user.nDoorNum = 1
+            user.nDoors[0] = 0
+            user.stuValidBeginTime = make_net_time(datetime.datetime(2000, 1, 1))
+            user.stuValidEndTime = make_net_time(datetime.datetime(2037, 12, 31))
+
+            fail_codes = (C_ENUM * 1)()
+            inParam = NET_IN_ACCESS_USER_SERVICE_INSERT()
+            inParam.dwSize = sizeof(inParam)
+            inParam.nInfoNum = 1
+            inParam.pUserInfo = pointer(user)
+            outParam = NET_OUT_ACCESS_USER_SERVICE_INSERT()
+            outParam.dwSize = sizeof(outParam)
+            outParam.nMaxRetNum = 1
+            outParam.pFailCode = cast(fail_codes, POINTER(C_ENUM))
+
+            ok = self.sdk.OperateAccessUserService(
+                self.loginID,
+                EM_A_NET_EM_ACCESS_CTL_USER_SERVICE.NET_EM_ACCESS_CTL_USER_SERVICE_INSERT,
+                inParam, outParam, 5000
+            )
+            if not ok:
+                raise Exception(self.sdk.GetLastErrorMessage())
+            return True
+
+    def delete_user(self, user_id):
+        with self.lock:
+            self.ensure()
+            fail_codes = (C_ENUM * 1)()
+            inParam = NET_IN_ACCESS_USER_SERVICE_REMOVE()
+            inParam.dwSize = sizeof(inParam)
+            inParam.nUserNum = 1
+            inParam.szUserID = user_id.encode().ljust(32, b'\x00')
+            outParam = NET_OUT_ACCESS_USER_SERVICE_REMOVE()
+            outParam.dwSize = sizeof(outParam)
+            outParam.nMaxRetNum = 1
+            outParam.pFailCode = cast(fail_codes, POINTER(C_ENUM))
+
+            ok = self.sdk.OperateAccessUserService(
+                self.loginID,
+                EM_A_NET_EM_ACCESS_CTL_USER_SERVICE.NET_EM_ACCESS_CTL_USER_SERVICE_REMOVE,
+                inParam, outParam, 5000
+            )
+            if not ok:
+                raise Exception(self.sdk.GetLastErrorMessage())
+            return True
+
+    def get_user_by_id(self, user_id):
+        """按用户ID精确查询设备人员"""
+        with self.lock:
+            self.ensure()
+            fail_codes = (C_ENUM * 1)()
+            users = (NET_ACCESS_USER_INFO * 1)()
+
+            inParam = NET_IN_ACCESS_USER_SERVICE_GET()
+            inParam.dwSize = sizeof(inParam)
+            inParam.nUserNum = 1
+            # 关键：将用户ID编码后，用 b'\x00' 填充到 32 字节
+            user_id_bytes = user_id.encode('utf-8')
+            padded = user_id_bytes.ljust(32, b'\x00')
+            # 直接复制到缓冲区（Python ctypes 会自动处理）
+            inParam.szUserID = padded
+
+            outParam = NET_OUT_ACCESS_USER_SERVICE_GET()
+            outParam.dwSize = sizeof(outParam)
+            outParam.nMaxRetNum = 1
+            outParam.pUserInfo = cast(users, POINTER(NET_ACCESS_USER_INFO))
+            outParam.pFailCode = cast(fail_codes, POINTER(C_ENUM))
+
+            ok = self.sdk.OperateAccessUserService(
+                self.loginID,
+                EM_A_NET_EM_ACCESS_CTL_USER_SERVICE.NET_EM_ACCESS_CTL_USER_SERVICE_GET,
+                inParam, outParam, 5000
+            )
+            if not ok:
+                # 打印错误便于调试
+                err_msg = self.sdk.GetLastErrorMessage()
+                print(f"[get_user_by_id] 查询用户 {user_id} 失败: {err_msg}")
+                return None
+
+            u = users[0]
+            name = u.szName.decode('utf-8', errors='ignore').strip('\x00')
+            begin = u.stuValidBeginTime
+            end = u.stuValidEndTime
+            return {
+                "user_id": user_id,
+                "name": name,
+                "status": u.nUserStatus,
+                "doors": [u.nDoors[i] for i in range(u.nDoorNum)],
+                "valid_begin": f"{begin.dwYear}-{begin.dwMonth:02d}-{begin.dwDay:02d}",
+                "valid_end": f"{end.dwYear}-{end.dwMonth:02d}-{end.dwDay:02d}",
+            }
+            
+    def get_users_paginated(self, offset=0, limit=20):
+        """分页获取设备人员（先获取总数，再查指定页）"""
+        with self.lock:
+            self.ensure()
+            
+            # 1. 获取所有用户ID（通过门禁卡记录）
+            condition = NET_A_FIND_RECORD_ACCESSCTLCARD_CONDITION()
+            condition.dwSize = sizeof(condition)
+            condition.abCardNo = False
+            condition.abUserID = False
+            condition.abIsValid = False
+
+            inParam = NET_IN_FIND_RECORD_PARAM()
+            inParam.dwSize = sizeof(inParam)
+            inParam.emType = EM_NET_RECORD_TYPE.ACCESSCTLCARD
+            inParam.pQueryCondition = cast(byref(condition), c_void_p)
+
+            outParam = NET_OUT_FIND_RECORD_PARAM()
+            outParam.dwSize = sizeof(outParam)
+
+            result = self.sdk.FindRecord(self.loginID, inParam, outParam, 5000)
+            if not result:
+                raise Exception(f"获取用户ID列表失败: {self.sdk.GetLastErrorMessage()}")
+
+            findHandle = outParam.lFindeHandle
+            all_user_ids = []
+            BATCH = 50
+
+            while True:
+                findIn = NET_IN_FIND_NEXT_RECORD_PARAM()
+                findIn.dwSize = sizeof(findIn)
+                findIn.lFindeHandle = findHandle
+                findIn.nFileCount = BATCH
+
+                records = (NET_RECORDSET_ACCESS_CTL_CARD * BATCH)()
+                for rec in records:
+                    rec.dwSize = sizeof(rec)
+
+                findOut = NET_OUT_FIND_NEXT_RECORD_PARAM()
+                findOut.dwSize = sizeof(findOut)
+                findOut.pRecordList = cast(records, c_void_p)
+                findOut.nMaxRecordNum = BATCH
+
+                ret = self.sdk.FindNextRecord(findIn, findOut, 5000)
+                got = findOut.nRetRecordNum
+                if not ret or got == 0:
+                    break
+
+                for i in range(got):
+                    uid = records[i].szUserID.decode('utf-8', errors='ignore').strip('\x00')
+                    if uid and uid not in all_user_ids:
+                        all_user_ids.append(uid)
+
+            self.sdk.FindRecordClose(findHandle)
+            total = len(all_user_ids)
+            
+            # 2. 截取当前页的ID并查询详情
+            page_ids = all_user_ids[offset:offset+limit]
+            users = []
+            for uid in page_ids:
+                info = self.get_user_by_id(uid)
+                if info:
+                    info["hasFace"] = False
+                    users.append(info)
+            
+            return total, users
+    def get_all_users(self):
+        """获取设备上全部人员信息（稳定版）"""
+        print("[get_all_users] 开始获取全部用户")
+        with self.lock:
+            self.ensure()
+            
+            # 第一步：获取所有 UserID
+            condition = NET_A_FIND_RECORD_ACCESSCTLCARD_CONDITION()
+            condition.dwSize = sizeof(condition)
+            condition.abCardNo = False
+            condition.abUserID = False
+            condition.abIsValid = False
+
+            inParam = NET_IN_FIND_RECORD_PARAM()
+            inParam.dwSize = sizeof(inParam)
+            inParam.emType = EM_NET_RECORD_TYPE.ACCESSCTLCARD
+            inParam.pQueryCondition = cast(byref(condition), c_void_p)
+
+            outParam = NET_OUT_FIND_RECORD_PARAM()
+            outParam.dwSize = sizeof(outParam)
+
+            result = self.sdk.FindRecord(self.loginID, inParam, outParam, 5000)
+            if not result:
+                raise Exception(f"获取用户ID列表失败: {self.sdk.GetLastErrorMessage()}")
+
+            findHandle = outParam.lFindeHandle
+            all_user_ids = []
+            BATCH = 50
+
+            while True:
+                findIn = NET_IN_FIND_NEXT_RECORD_PARAM()
+                findIn.dwSize = sizeof(findIn)
+                findIn.lFindeHandle = findHandle
+                findIn.nFileCount = BATCH
+
+                records = (NET_RECORDSET_ACCESS_CTL_CARD * BATCH)()
+                for rec in records:
+                    rec.dwSize = sizeof(rec)
+
+                findOut = NET_OUT_FIND_NEXT_RECORD_PARAM()
+                findOut.dwSize = sizeof(findOut)
+                findOut.pRecordList = cast(records, c_void_p)
+                findOut.nMaxRecordNum = BATCH
+
+                ret = self.sdk.FindNextRecord(findIn, findOut, 5000)
+                got = findOut.nRetRecordNum
+                if not ret or got == 0:
+                    break
+
+                for i in range(got):
+                    uid = records[i].szUserID.decode('utf-8', errors='ignore').strip('\x00')
+                    if uid and uid not in all_user_ids:
+                        all_user_ids.append(uid)
+
+            self.sdk.FindRecordClose(findHandle)
+            print(f"[get_all_users] 共获取到 {len(all_user_ids)} 个唯一 UserID")
+
+            # 第二步：逐个查询用户详情
+            users = []
+            for idx, uid in enumerate(all_user_ids):
+                if (idx + 1) % 10 == 0:
+                    print(f"[get_all_users] 进度: {idx+1}/{len(all_user_ids)}")
+
+                fail_codes = (C_ENUM * 1)()
+                users_arr = (NET_ACCESS_USER_INFO * 1)()
+
+                inParam = NET_IN_ACCESS_USER_SERVICE_GET()
+                inParam.dwSize = sizeof(inParam)
+                inParam.nUserNum = 1
+                inParam.szUserID = uid.encode().ljust(32, b'\x00')
+
+                outParam = NET_OUT_ACCESS_USER_SERVICE_GET()
+                outParam.dwSize = sizeof(outParam)
+                outParam.nMaxRetNum = 1
+                outParam.pUserInfo = cast(users_arr, POINTER(NET_ACCESS_USER_INFO))
+                outParam.pFailCode = cast(fail_codes, POINTER(C_ENUM))
+
+                ok = self.sdk.OperateAccessUserService(
+                    self.loginID,
+                    EM_A_NET_EM_ACCESS_CTL_USER_SERVICE.NET_EM_ACCESS_CTL_USER_SERVICE_GET,
+                    inParam, outParam, 5000
+                )
+                if not ok:
+                    continue
+
+                u = users_arr[0]
+                u_name = u.szName.decode('utf-8', errors='ignore').strip('\x00')
+                begin = u.stuValidBeginTime
+                end = u.stuValidEndTime
+                users.append({
+                    "user_id": uid,
+                    "name": u_name,
+                    "status": u.nUserStatus,
+                    "doors": [u.nDoors[k] for k in range(u.nDoorNum)],
+                    "valid_begin": f"{begin.dwYear}-{begin.dwMonth:02d}-{begin.dwDay:02d}",
+                    "valid_end": f"{end.dwYear}-{end.dwMonth:02d}-{end.dwDay:02d}",
+                    "hasFace": False
+                })
+
+            print(f"[get_all_users] 成功获取 {len(users)} 个用户")
+            return users
+
+    def search_users_by_name(self, keyword):
+        """按姓名模糊搜索设备人员（稳定版，基于已验证的 find_user_by_name 逻辑）"""
+        print(f"[search_users_by_name] 开始搜索，关键词: {keyword}")
+        with self.lock:
+            self.ensure()
+            
+            # 第一步：获取所有门禁卡记录中的 UserID
+            condition = NET_A_FIND_RECORD_ACCESSCTLCARD_CONDITION()
+            condition.dwSize = sizeof(condition)
+            condition.abCardNo = False
+            condition.abUserID = False
+            condition.abIsValid = False
+
+            inParam = NET_IN_FIND_RECORD_PARAM()
+            inParam.dwSize = sizeof(inParam)
+            inParam.emType = EM_NET_RECORD_TYPE.ACCESSCTLCARD
+            inParam.pQueryCondition = cast(byref(condition), c_void_p)
+
+            outParam = NET_OUT_FIND_RECORD_PARAM()
+            outParam.dwSize = sizeof(outParam)
+
+            result = self.sdk.FindRecord(self.loginID, inParam, outParam, 5000)
+            if not result:
+                raise Exception(f"获取用户ID列表失败: {self.sdk.GetLastErrorMessage()}")
+
+            findHandle = outParam.lFindeHandle
+            all_user_ids = []
+            BATCH = 50
+
+            while True:
+                findIn = NET_IN_FIND_NEXT_RECORD_PARAM()
+                findIn.dwSize = sizeof(findIn)
+                findIn.lFindeHandle = findHandle
+                findIn.nFileCount = BATCH
+
+                records = (NET_RECORDSET_ACCESS_CTL_CARD * BATCH)()
+                for rec in records:
+                    rec.dwSize = sizeof(rec)
+
+                findOut = NET_OUT_FIND_NEXT_RECORD_PARAM()
+                findOut.dwSize = sizeof(findOut)
+                findOut.pRecordList = cast(records, c_void_p)
+                findOut.nMaxRecordNum = BATCH
+
+                ret = self.sdk.FindNextRecord(findIn, findOut, 5000)
+                got = findOut.nRetRecordNum
+                if not ret or got == 0:
+                    break
+
+                for i in range(got):
+                    uid = records[i].szUserID.decode('utf-8', errors='ignore').strip('\x00')
+                    if uid and uid not in all_user_ids:
+                        all_user_ids.append(uid)
+
+            self.sdk.FindRecordClose(findHandle)
+            print(f"[search_users_by_name] 共获取到 {len(all_user_ids)} 个唯一 UserID")
+
+            # 第二步：逐个查询用户详情，按姓名过滤
+            matched = []
+            for idx, uid in enumerate(all_user_ids):
+                # 进度提示
+                if (idx + 1) % 10 == 0:
+                    print(f"[search_users_by_name] 进度: {idx+1}/{len(all_user_ids)}")
+
+                fail_codes = (C_ENUM * 1)()
+                users = (NET_ACCESS_USER_INFO * 1)()
+
+                inParam = NET_IN_ACCESS_USER_SERVICE_GET()
+                inParam.dwSize = sizeof(inParam)
+                inParam.nUserNum = 1
+                inParam.szUserID = uid.encode().ljust(32, b'\x00')
+
+                outParam = NET_OUT_ACCESS_USER_SERVICE_GET()
+                outParam.dwSize = sizeof(outParam)
+                outParam.nMaxRetNum = 1
+                outParam.pUserInfo = cast(users, POINTER(NET_ACCESS_USER_INFO))
+                outParam.pFailCode = cast(fail_codes, POINTER(C_ENUM))
+
+                ok = self.sdk.OperateAccessUserService(
+                    self.loginID,
+                    EM_A_NET_EM_ACCESS_CTL_USER_SERVICE.NET_EM_ACCESS_CTL_USER_SERVICE_GET,
+                    inParam, outParam, 5000
+                )
+                if not ok:
+                    # 单个用户查询失败，跳过即可
+                    continue
+
+                u = users[0]
+                u_name = u.szName.decode('utf-8', errors='ignore').strip('\x00')
+                if keyword in u_name:
+                    begin = u.stuValidBeginTime
+                    end = u.stuValidEndTime
+                    matched.append({
+                        "user_id": uid,
+                        "name": u_name,
+                        "status": u.nUserStatus,
+                        "doors": [u.nDoors[k] for k in range(u.nDoorNum)],
+                        "valid_begin": f"{begin.dwYear}-{begin.dwMonth:02d}-{begin.dwDay:02d}",
+                        "valid_end": f"{end.dwYear}-{end.dwMonth:02d}-{end.dwDay:02d}",
+                        "hasFace": False
+                    })
+
+            print(f"[search_users_by_name] 匹配到 {len(matched)} 条结果")
+            return matched
+
+    # ================= 人脸 =================
+    def add_face(self, user_id, path):
+        img = compress_image(path)
+        b64 = base64.b64encode(img).decode()
+        url = f"http://{self.ip}/cgi-bin/FaceInfoManager.cgi?action=add"
+        r = requests.post(
+            url,
+            json={"UserID": user_id, "Info": {"PhotoData": [b64]}},
+            auth=HTTPDigestAuth(self.username, self.password),
+            timeout=30
+        )
+        if r.status_code != 200:
+            raise Exception(r.text)
+        return True
+
+    def delete_face(self, user_id):
+        url = f"http://{self.ip}/cgi-bin/FaceInfoManager.cgi?action=delete"
+        r = requests.post(
+            url,
+            json={"UserIDList": [user_id]},
+            auth=HTTPDigestAuth(self.username, self.password),
+            timeout=30
+        )
+        if r.status_code != 200:
+            raise Exception(r.text)
+        return True
+
+    # ================= 日志（已加时区转换） =================
+    def query_log(self, start, end):
+        with self.lock:
+            self.ensure()
+            records = []
+
+            cond = NET_FIND_RECORD_ACCESSCTLCARDREC_CONDITION_EX()
+            cond.dwSize = sizeof(cond)
+            cond.bTimeEnable = True
+            cond.stStartTime = make_net_time(start)
+            cond.stEndTime = make_net_time(end)
+
+            inParam = NET_IN_FIND_RECORD_PARAM()
+            inParam.dwSize = sizeof(inParam)
+            inParam.emType = EM_NET_RECORD_TYPE.ACCESSCTLCARDREC_EX
+            inParam.pQueryCondition = cast(byref(cond), c_void_p)
+
+            outParam = NET_OUT_FIND_RECORD_PARAM()
+            outParam.dwSize = sizeof(outParam)
+
+            if not self.sdk.FindRecord(self.loginID, inParam, outParam, 5000):
+                raise Exception(self.sdk.GetLastErrorMessage())
+
+            handle = outParam.lFindeHandle
+
+            while True:
+                findIn = NET_IN_FIND_NEXT_RECORD_PARAM()
+                findIn.dwSize = sizeof(findIn)
+                findIn.lFindeHandle = handle
+                findIn.nFileCount = 20
+
+                recs = (NET_RECORDSET_ACCESS_CTL_CARDREC * 20)()
+                for r in recs:
+                    r.dwSize = sizeof(r)
+
+                findOut = NET_OUT_FIND_NEXT_RECORD_PARAM()
+                findOut.dwSize = sizeof(findOut)
+                findOut.pRecordList = cast(recs, c_void_p)
+                findOut.nMaxRecordNum = 20
+
+                if not self.sdk.FindNextRecord(findIn, findOut, 5000):
+                    break
+
+                if findOut.nRetRecordNum == 0:
+                    break
+
+                for i in range(findOut.nRetRecordNum):
+                    rec = recs[i]
+                    t = rec.stuTime
+
+                    # UTC -> 东八区
+                    utc_time = datetime.datetime(
+                        t.dwYear, t.dwMonth, t.dwDay,
+                        t.dwHour, t.dwMinute, t.dwSecond,
+                        tzinfo=timezone.utc
+                    )
+                    local_tz = timezone(timedelta(hours=8))
+                    local_time = utc_time.astimezone(local_tz)
+
+                    records.append({
+                        "time": local_time.strftime("%Y-%m-%d %H:%M:%S"),
+                        "door": rec.nDoor,
+                        "user_id": rec.szUserID.decode(errors="ignore"),
+                        "name": rec.szCardName.decode(errors="ignore"),
+                        "status": "成功" if rec.bStatus else "失败",
+                        "method": METHOD_MAP.get(rec.emMethod, str(rec.emMethod))
+                    })
+
+            self.sdk.FindRecordClose(handle)
+            return records
+
+    def close(self):
+        with self.lock:
+            if self.loginID:
+                self.sdk.Logout(self.loginID)
+                self.loginID = 0
+            self.sdk.Cleanup()

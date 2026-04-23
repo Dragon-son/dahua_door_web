@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "传动轴大厅",
+    "ip": "10.112.5.26",
+    "port": 37777,
+    "username": "admin",
+    "password": "Aa123456",
+    "area": "传动轴",
+    "note": ""
+  },
+  {
+    "id": 2,
+    "name": "精铸大厅进车间",
+    "ip": "10.112.5.22",
+    "port": 37777,
+    "username": "admin",
+    "password": "Aa123456",
+    "area": "精铸",
+    "note": ""
+  },
+  {
+    "id": 3,
+    "name": "传动轴2号人行门",
+    "ip": "10.112.5.25",
+    "port": 37777,
+    "username": "admin",
+    "password": "Aa123456",
+    "area": "传动轴",
+    "note": "123"
+  },
+  {
+    "id": 4,
+    "name": "传动轴1号门进车间",
+    "ip": "10.112.5.27",
+    "port": 37777,
+    "username": "admin",
+    "password": "Aa123456",
+    "area": "传动轴",
+    "note": ""
+  }
+]
