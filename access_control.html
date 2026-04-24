@@ -18,35 +18,124 @@
     --sidebar-w: 220px; --radius: 8px; --radius2: 12px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; font-size: 14px; }
+  body { 
+    font-family: 'Noto Sans SC', sans-serif; 
+    background: var(--bg); 
+    color: var(--text); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    height: 100vh; 
+    overflow: hidden; 
+    font-size: 14px; 
+  }
 
-  .sidebar { width: var(--sidebar-w); background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; }
+  #login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: transparent;
+  }
+  .login-card {
+    background: var(--bg2);
+    padding: 40px 30px;
+    border-radius: var(--radius2);
+    width: 340px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.4);
+    text-align: center;
+  }
+  .login-card h2 { margin-bottom: 24px; color: var(--text); }
+  .login-card .form-row { margin-bottom: 16px; }
+  .login-card input {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13.5px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .login-card input:focus { border-color: var(--accent); }
+  .login-card a { color: var(--blue2); text-decoration: none; }
+  .login-card a:hover { text-decoration: underline; }
+
+  #main-app {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  .sidebar { 
+    width: var(--sidebar-w); 
+    background: var(--bg2); 
+    border-right: 1px solid var(--border); 
+    display: flex; 
+    flex-direction: column; 
+    flex-shrink: 0; 
+    height: 100vh; 
+  }
   .sidebar-logo { padding: 20px 18px 16px; border-bottom: 1px solid var(--border); }
   .logo-mark { display: flex; align-items: center; gap: 10px; }
-  .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), #1a7431); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .logo-icon { 
+    width: 32px; height: 32px; 
+    background: linear-gradient(135deg, var(--accent), #1a7431); 
+    border-radius: 8px; 
+    display: flex; align-items: center; justify-content: center; 
+    font-size: 16px; flex-shrink: 0; 
+  }
   .logo-text { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }
   .logo-sub  { font-size: 11px; color: var(--text3); }
   .sidebar-nav { padding: 12px 10px; flex: 1; }
   .nav-label { font-size: 11px; color: var(--text3); font-weight: 500; padding: 6px 8px 4px; letter-spacing: .06em; text-transform: uppercase; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--radius); cursor: pointer; color: var(--text2); font-size: 13.5px; transition: all .15s; margin: 2px 0; user-select: none; }
+  .nav-item { 
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px; 
+    border-radius: var(--radius); cursor: pointer; color: var(--text2); 
+    font-size: 13.5px; transition: all .15s; margin: 2px 0; user-select: none; 
+  }
   .nav-item:hover { background: var(--bg3); color: var(--text); }
   .nav-item.active { background: rgba(46,160,67,.15); color: var(--accent2); font-weight: 500; }
   .nav-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
-  .sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
-  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; animation: pulse 2s infinite; }
+  .sidebar-footer { 
+    padding: 14px 16px; border-top: 1px solid var(--border); 
+    display: flex; align-items: center; gap: 6px; 
+  }
+  .status-dot { 
+    width: 7px; height: 7px; border-radius: 50%; background: var(--accent); 
+    flex-shrink: 0; animation: pulse 2s infinite; 
+  }
   .status-dot.offline { background: var(--red2); }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
   #srvLabel { font-size: 12px; color: var(--text3); }
 
-  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-  .topbar { height: 52px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 24px; gap: 12px; flex-shrink: 0; }
+  .main { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden; 
+  }
+  .topbar { 
+    height: 52px; background: var(--bg2); border-bottom: 1px solid var(--border); 
+    display: flex; align-items: center; padding: 0 24px; gap: 12px; flex-shrink: 0; 
+  }
   .breadcrumb { font-size: 13px; color: var(--text3); display: flex; align-items: center; gap: 6px; }
   .topbar-actions { margin-left: auto; display: flex; gap: 8px; }
   .content { flex: 1; overflow-y: auto; padding: 24px; }
 
   .page { display: none; } .page.active { display: block; }
 
-  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--radius); font-size: 13px; font-family: inherit; font-weight: 500; cursor: pointer; border: 1px solid transparent; transition: all .15s; user-select: none; }
+  .btn { 
+    display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; 
+    border-radius: var(--radius); font-size: 13px; font-family: inherit; 
+    font-weight: 500; cursor: pointer; border: 1px solid transparent; 
+    transition: all .15s; user-select: none; 
+  }
   .btn:disabled { opacity: .5; cursor: not-allowed; }
   .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
   .btn-primary:hover:not(:disabled) { background: var(--accent2); }
@@ -56,8 +145,15 @@
   .btn-danger:hover:not(:disabled) { background: rgba(218,54,51,.1); }
   .btn-blue { background: rgba(56,139,253,.15); color: var(--blue2); border-color: var(--blue); }
   .btn-blue:hover:not(:disabled) { background: rgba(56,139,253,.25); }
-  .btn-open { background: linear-gradient(135deg,#1a7431,var(--accent)); color:#fff; padding:14px 32px; font-size:16px; border-radius:10px; border:none; box-shadow:0 0 24px var(--accent-glow); letter-spacing:.04em; transition:all .2s; }
-  .btn-open:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 4px 32px var(--accent-glow),0 0 40px rgba(46,160,67,.3); }
+  .btn-open { 
+    background: linear-gradient(135deg,#1a7431,var(--accent)); color:#fff; 
+    padding:14px 32px; font-size:16px; border-radius:10px; border:none; 
+    box-shadow:0 0 24px var(--accent-glow); letter-spacing:.04em; transition:all .2s; 
+  }
+  .btn-open:hover:not(:disabled) { 
+    transform:translateY(-1px); 
+    box-shadow:0 4px 32px var(--accent-glow),0 0 40px rgba(46,160,67,.3); 
+  }
   .btn-sm { padding: 5px 10px; font-size: 12px; }
 
   .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 20px; }
@@ -65,7 +161,11 @@
 
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; }
-  thead th { text-align: left; padding: 10px 14px; font-size: 12px; font-weight: 600; color: var(--text3); border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: .05em; }
+  thead th { 
+    text-align: left; padding: 10px 14px; font-size: 12px; font-weight: 600; 
+    color: var(--text3); border-bottom: 1px solid var(--border); 
+    text-transform: uppercase; letter-spacing: .05em; 
+  }
   tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
   tbody tr:last-child { border-bottom: none; }
   tbody tr:hover { background: rgba(139,148,158,.05); }
@@ -73,7 +173,6 @@
   .mono { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--text3); }
 
   #personBody td { white-space: nowrap; }
-  @media (max-width: 768px) { #personBody td { white-space: normal; } }
 
   .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 20px; font-size: 11.5px; font-weight: 500; }
   .bg { background: rgba(46,160,67,.15);  color: var(--accent2); }
@@ -84,14 +183,28 @@
 
   .form-row { margin-bottom: 16px; }
   .form-label { display: block; font-size: 12px; color: var(--text3); margin-bottom: 6px; font-weight: 500; }
-  .form-input, .form-select { width: 100%; padding: 8px 12px; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius); color: var(--text); font-family: inherit; font-size: 13.5px; outline: none; transition: border-color .15s; }
+  .form-input, .form-select { 
+    width: 100%; padding: 8px 12px; background: var(--bg3); 
+    border: 1px solid var(--border2); border-radius: var(--radius); 
+    color: var(--text); font-family: inherit; font-size: 13.5px; 
+    outline: none; transition: border-color .15s; 
+  }
   .form-input:focus, .form-select:focus { border-color: var(--accent); }
   .form-select option { background: var(--bg3); }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .modal-overlay { 
+    position: fixed; inset: 0; background: rgba(0,0,0,.6); 
+    backdrop-filter: blur(4px); display: flex; align-items: center; 
+    justify-content: center; z-index: 100; opacity: 0; pointer-events: none; 
+    transition: opacity .2s; 
+  }
   .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius2); padding: 24px; width: 440px; max-width: 95vw; transform: translateY(16px); transition: transform .2s; }
+  .modal { 
+    background: var(--bg2); border: 1px solid var(--border2); 
+    border-radius: var(--radius2); padding: 24px; width: 440px; 
+    max-width: 95vw; transform: translateY(16px); transition: transform .2s; 
+  }
   .modal-overlay.open .modal { transform: translateY(0); }
   .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
   .modal-title { font-size: 15px; font-weight: 600; }
@@ -104,24 +217,51 @@
   .sec-actions { display: flex; gap: 8px; }
 
   .area-section { margin-bottom: 28px; }
-  .area-title { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .area-title { 
+    font-size: 12px; font-weight: 600; color: var(--text3); 
+    text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; 
+    padding-bottom: 8px; border-bottom: 1px solid var(--border); 
+    display: flex; align-items: center; gap: 8px; cursor: pointer; 
+  }
   .device-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 12px; }
-  .device-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 16px; cursor: pointer; transition: all .2s; position: relative; overflow: hidden; }
-  .device-card::before { content:''; position:absolute; top:0;left:0;right:0; height:3px; background:var(--accent); opacity:0; transition:opacity .2s; }
-  .device-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.3); }
+  .device-card { 
+    background: var(--bg2); border: 1px solid var(--border); 
+    border-radius: var(--radius2); padding: 16px; cursor: pointer; 
+    transition: all .2s; position: relative; overflow: hidden; 
+  }
+  .device-card::before { 
+    content:''; position:absolute; top:0;left:0;right:0; height:3px; 
+    background:var(--accent); opacity:0; transition:opacity .2s; 
+  }
+  .device-card:hover { 
+    border-color:var(--accent); transform:translateY(-2px); 
+    box-shadow:0 8px 24px rgba(0,0,0,.3); 
+  }
   .device-card:hover::before { opacity:1; }
   .dc-icon { font-size:22px; margin-bottom:8px; }
   .dc-name { font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:4px; }
   .dc-ip { font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--text3); }
   .dc-status { position:absolute; top:12px; right:12px; }
   .device-detail { display:none; } .device-detail.active { display:block; }
-  .back-btn { display:inline-flex; align-items:center; gap:6px; color:var(--text3); font-size:13px; cursor:pointer; margin-bottom:20px; padding:6px 0; border:none; background:none; font-family:inherit; transition:color .15s; }
+  .back-btn { 
+    display:inline-flex; align-items:center; gap:6px; color:var(--text3); 
+    font-size:13px; cursor:pointer; margin-bottom:20px; padding:6px 0; 
+    border:none; background:none; font-family:inherit; transition:color .15s; 
+  }
   .back-btn:hover { color:var(--text); }
-  .open-door-card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius2); padding:28px 24px; text-align:center; margin-bottom:20px; }
+  .open-door-card { 
+    background:var(--bg2); border:1px solid var(--border); 
+    border-radius:var(--radius2); padding:28px 24px; text-align:center; 
+    margin-bottom:20px; 
+  }
   .open-door-card h3 { font-size:14px; font-weight:600; color:var(--text2); margin-bottom:6px; }
   .open-door-card p  { font-size:12.5px; color:var(--text3); margin-bottom:20px; }
 
-  .device-picker { display:flex; align-items:center; gap:10px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius2); padding:12px 16px; margin-bottom:20px; }
+  .device-picker { 
+    display:flex; align-items:center; gap:10px; background:var(--bg2); 
+    border:1px solid var(--border); border-radius:var(--radius2); 
+    padding:12px 16px; margin-bottom:20px; 
+  }
   .device-picker label { font-size:12.5px; color:var(--text3); white-space:nowrap; }
 
   .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
@@ -130,7 +270,12 @@
   .stat-label { font-size:11.5px; color:var(--text3); margin-top:2px; }
 
   .search-bar { position:relative; flex:1; max-width:280px; }
-  .search-bar input { width:100%; padding:7px 12px 7px 32px; background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); color:var(--text); font-family:inherit; font-size:13px; outline:none; transition:border-color .15s; }
+  .search-bar input { 
+    width:100%; padding:7px 12px 7px 32px; background:var(--bg3); 
+    border:1px solid var(--border); border-radius:var(--radius); 
+    color:var(--text); font-family:inherit; font-size:13px; 
+    outline:none; transition:border-color .15s; 
+  }
   .search-bar input:focus { border-color:var(--accent2); }
   .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text3); font-size:12px; pointer-events:none; }
 
@@ -138,18 +283,36 @@
   .empty-icon  { font-size:36px; margin-bottom:12px; opacity:.5; }
   .empty-state p { font-size:13px; }
 
-  .toast-container { position:fixed; top:16px; right:20px; display:flex; flex-direction:column; gap:8px; z-index:200; pointer-events:none; }
-  .toast { background:var(--bg3); border:1px solid var(--border2); padding:10px 16px; border-radius:var(--radius); font-size:13px; color:var(--text); display:flex; align-items:center; gap:8px; animation:slideIn .25s ease, fadeOut .3s ease 2.5s forwards; min-width:220px; box-shadow:0 4px 16px rgba(0,0,0,.4); }
+  .toast-container { 
+    position:fixed; top:16px; right:20px; display:flex; 
+    flex-direction:column; gap:8px; z-index:200; pointer-events:none; 
+  }
+  .toast { 
+    background:var(--bg3); border:1px solid var(--border2); 
+    padding:10px 16px; border-radius:var(--radius); font-size:13px; 
+    color:var(--text); display:flex; align-items:center; gap:8px; 
+    animation:slideIn .25s ease, fadeOut .3s ease 2.5s forwards; 
+    min-width:220px; box-shadow:0 4px 16px rgba(0,0,0,.4); 
+  }
   .toast.success { border-left:3px solid var(--accent); }
   .toast.error   { border-left:3px solid var(--red2); }
   .toast.info    { border-left:3px solid var(--blue2); }
   @keyframes slideIn { from{transform:translateX(20px);opacity:0} to{transform:translateX(0);opacity:1} }
   @keyframes fadeOut { to{opacity:0;transform:translateX(10px)} }
 
-  .spinner { display:inline-block; width:13px; height:13px; border:2px solid var(--border2); border-top-color:var(--accent2); border-radius:50%; animation:spin .6s linear infinite; }
+  .spinner { 
+    display:inline-block; width:13px; height:13px; 
+    border:2px solid var(--border2); border-top-color:var(--accent2); 
+    border-radius:50%; animation:spin .6s linear infinite; 
+  }
   @keyframes spin { to{transform:rotate(360deg)} }
 
-  .conn-banner { display:none; align-items:center; gap:10px; background:rgba(248,81,73,.1); border:1px solid var(--red); border-radius:var(--radius); padding:10px 16px; margin-bottom:16px; font-size:13px; color:var(--red2); }
+  .conn-banner { 
+    display:none; align-items:center; gap:10px; 
+    background:rgba(248,81,73,.1); border:1px solid var(--red); 
+    border-radius:var(--radius); padding:10px 16px; margin-bottom:16px; 
+    font-size:13px; color:var(--red2); 
+  }
   .conn-banner.show { display:flex; }
 
   .confirm-text { font-size:13.5px; color:var(--text2); line-height:1.6; }
@@ -160,9 +323,63 @@
   ::-webkit-scrollbar-track { background:transparent; }
   ::-webkit-scrollbar-thumb { background:var(--bg4); border-radius:3px; }
   ::-webkit-scrollbar-thumb:hover { background:var(--border2); }
+
+  /* 手机端适配 */
+  @media (max-width: 768px) {
+    body { flex-direction: column; align-items: stretch; justify-content: flex-start; height: 100vh; overflow: hidden; }
+    #main-app { flex-direction: column; position: relative; width: 100%; height: 100vh; }
+    .sidebar { width: 100%; height: auto; flex-direction: row; flex-shrink: 0; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--border); }
+    .sidebar-logo { display: none; }
+    .sidebar-nav { flex: 1; display: flex; flex-direction: row; padding: 6px 8px; gap: 4px; }
+    .nav-label { display: none; }
+    .nav-item { white-space: nowrap; font-size: 12px; padding: 6px 10px; }
+    .sidebar-footer { padding: 6px 10px; border-top: none; }
+    .main { flex: 1; width: 100%; overflow-y: auto; }
+    .topbar { padding: 0 12px; height: 44px; }
+    .content { padding: 12px; }
+    .device-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+    .device-card { padding: 12px; }
+    .stats-row { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .stat-card { padding: 10px 12px; }
+    .stat-num { font-size: 18px; }
+    .sec-hd { flex-wrap: wrap; gap: 8px; }
+    .sec-actions { flex-wrap: wrap; width: 100%; }
+    .search-bar { max-width: 100%; }
+    .btn { padding: 6px 10px; font-size: 12px; }
+    .btn-open { padding: 12px 24px; font-size: 14px; }
+    .modal { width: 95%; padding: 16px; }
+    .form-grid { grid-template-columns: 1fr; }
+    #personBody td { white-space: normal; font-size: 12px; }
+    table { font-size: 12px; }
+    thead th { padding: 6px 8px; }
+    tbody td { padding: 6px 8px; }
+    .device-picker { flex-wrap: wrap; }
+    .login-card { width: 90%; max-width: 340px; }
+  }
 </style>
 </head>
 <body>
+<div id="login-page" class="login-container">
+  <div class="login-card">
+    <h2>🔐 门禁管理系统</h2>
+    <div id="login-form">
+      <div class="form-row"><input type="text" id="login-username" placeholder="用户名"></div>
+      <div class="form-row"><input type="password" id="login-password" placeholder="密码" onkeyup="if(event.key==='Enter') doLogin()"></div>
+      <button class="btn btn-primary" onclick="doLogin()">登录</button>
+      <p style="margin-top:12px;color:var(--text3);">没有账号？<a href="#" onclick="showRegisterForm()">注册</a></p>
+    </div>
+    <div id="register-form" style="display:none;">
+      <div class="form-row"><input type="text" id="reg-username" placeholder="用户名"></div>
+      <div class="form-row"><input type="password" id="reg-password" placeholder="密码"></div>
+      <div class="form-row"><input type="password" id="reg-password2" placeholder="确认密码" onkeyup="if(event.key==='Enter') doRegister()"></div>
+      <button class="btn btn-primary" onclick="doRegister()">注册</button>
+      <p style="margin-top:12px;color:var(--text3);"><a href="#" onclick="showLoginForm()">返回登录</a></p>
+    </div>
+    <div id="login-msg" style="color:var(--red2);margin-top:10px;font-size:13px;"></div>
+  </div>
+</div>
+
+<div id="main-app" style="display:none;">
 
 <div class="sidebar">
   <div class="sidebar-logo">
@@ -180,6 +397,7 @@
   <div class="sidebar-footer">
     <div class="status-dot" id="srvDot"></div>
     <span id="srvLabel">连接中…</span>
+    <button class="btn btn-ghost btn-sm" onclick="doLogout()" style="margin-left:auto;">登出</button>
   </div>
 </div>
 
@@ -242,7 +460,7 @@
       </div>
       <div class="card" style="padding:0">
         <div class="table-wrap">
-          <table><thead><tr><th>名称</th><th>IP 地址</th><th>端口</th><th>账号</th><th>区域</th><th>操作</th></tr></thead><tbody id="devBody"></tbody></table>
+          <table><thead><tr><th>名称</th><th>IP 地址</th><th>端口</th><th>账号</th><th>区域</th><th>状态</th><th>操作</th></tr></thead><tbody id="devBody"></tbody></table>
         </div>
       </div>
     </div>
@@ -256,23 +474,19 @@
         <span id="personDevBadge" style="margin-left:4px"></span>
       </div>
       <div id="personContent" style="display:none">
-              <div class="sec-hd">
+        <div class="sec-hd">
           <h2>人员列表</h2>
           <div class="sec-actions" style="flex-wrap:wrap;gap:8px;">
-            <!-- 按 ID 搜索 -->
-            <div class="search-bar" style="max-width:160px;">
-              <span class="search-icon">🆔</span>
-              <input type="text" placeholder="用户ID" id="searchUserId" onkeyup="if(event.key==='Enter') searchById()">
-            </div>
-            <!-- 按姓名搜索 -->
-            <div class="search-bar" style="max-width:160px;">
-              <span class="search-icon">👤</span>
-              <input type="text" placeholder="姓名" id="searchUserName" onkeyup="if(event.key==='Enter') searchByName()">
-            </div>
+            <div class="search-bar" style="max-width:160px;"><span class="search-icon">🆔</span><input type="text" placeholder="用户ID" id="searchUserId" onkeyup="if(event.key==='Enter') searchById()"></div>
+            <div class="search-bar" style="max-width:160px;"><span class="search-icon">👤</span><input type="text" placeholder="姓名" id="searchUserName" onkeyup="if(event.key==='Enter') searchByName()"></div>
             <button class="btn btn-blue btn-sm" onclick="searchById()">🔍 查ID</button>
             <button class="btn btn-blue btn-sm" onclick="searchByName()">🔍 查姓名</button>
-            <button class="btn btn-blue btn-sm" onclick="loadDeviceUsersPage(1)">📥 加载设备人员</button>
+            <button class="btn btn-blue btn-sm" onclick="showAllLocalPersons()">📋 返回</button>
+            <button class="btn btn-blue btn-sm" onclick="loadAllDeviceUsers()">📥 加载设备人员</button>
             <button class="btn btn-primary" onclick="openPersonModal()">+ 添加人员</button>
+            <button class="btn btn-primary" onclick="downloadTemplate()">📥 下载模板</button>
+            <button class="btn btn-primary" onclick="document.getElementById('batchFolderInput').click()">📂 批量导入</button>
+            <input type="file" id="batchFolderInput" webkitdirectory style="display:none" onchange="handleBatchFolder(this.files)">
           </div>
         </div>
         <div class="card" style="padding:0">
@@ -283,7 +497,6 @@
             </table>
           </div>
         </div>
-        <!-- 分页控件 -->
         <div style="display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:16px;">
           <span style="color:var(--text3);font-size:13px;">共 <span id="personTotal">0</span> 条</span>
           <div style="display:flex;gap:6px;">
@@ -297,21 +510,21 @@
       </div>
       <div id="personPH" class="empty-state"><div class="empty-icon">👆</div><p>请先选择设备查看人员</p></div>
     </div>
-
   </div>
 </div>
 
+<!-- 模态框（设备、区域、人员、人脸、确认）保持不变，但确认模态框取消按钮需加 id -->
 <!-- 设备模态框 -->
 <div class="modal-overlay" id="devModal">
   <div class="modal">
     <div class="modal-header"><div class="modal-title" id="devModalTitle">添加设备</div><button class="modal-close" onclick="closeModal('devModal')">✕</button></div>
     <div class="form-grid">
-      <div class="form-row"><label class="form-label">设备名称 *</label><input class="form-input" id="d-name" placeholder="主楼大门"></div>
-      <div class="form-row"><label class="form-label">IP 地址 *</label><input class="form-input" id="d-ip" placeholder="10.112.5.27"></div>
-      <div class="form-row"><label class="form-label">端口</label><input class="form-input" id="d-port" type="number" placeholder="37777"></div>
+      <div class="form-row"><label class="form-label">设备名称 *</label><input class="form-input" id="d-name" placeholder=""></div>
+      <div class="form-row"><label class="form-label">IP 地址 *</label><input class="form-input" id="d-ip" placeholder=""></div>
+      <div class="form-row"><label class="form-label">端口 *</label><input class="form-input" id="d-port" type="number" placeholder="37777"></div>
       <div class="form-row"><label class="form-label">区域</label><select class="form-select" id="d-area"></select></div>
-      <div class="form-row"><label class="form-label">账号</label><input class="form-input" id="d-user" placeholder="admin"></div>
-      <div class="form-row"><label class="form-label">密码</label><input class="form-input" id="d-pass" type="password" placeholder="••••••••"></div>
+      <div class="form-row"><label class="form-label">账号 *</label><input class="form-input" id="d-user" placeholder=""></div>
+      <div class="form-row"><label class="form-label">密码 *</label><input class="form-input" id="d-pass" type="" placeholder=""></div>
       <div class="form-row"><label class="form-label">备注</label><input class="form-input" id="d-note" placeholder="可选"></div>
     </div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('devModal')">取消</button><button class="btn btn-primary" onclick="saveDevice()">保存设备</button></div>
@@ -336,15 +549,26 @@
   </div>
 </div>
 
-<!-- 人员模态框 -->
+<!-- 人员模态框（多选设备） -->
 <div class="modal-overlay" id="personModal">
   <div class="modal">
     <div class="modal-header"><div class="modal-title" id="personModalTitle">添加人员</div><button class="modal-close" onclick="closeModal('personModal')">✕</button></div>
     <div class="form-grid">
-      <div class="form-row"><label class="form-label">用户ID *</label><input class="form-input" id="p-id" placeholder="1001"></div>
-      <div class="form-row"><label class="form-label">姓名 *</label><input class="form-input" id="p-name" placeholder="张三"></div>
-      <div class="form-row"><label class="form-label">有效期起始</label><input class="form-input" id="p-begin" type="date" value="2000-01-01"></div>
-      <div class="form-row"><label class="form-label">有效期截止</label><input class="form-input" id="p-end" type="date" value="2037-12-31"></div>
+      <div class="form-row"><label class="form-label">用户ID *</label><input class="form-input" id="p-id" placeholder="工号"></div>
+      <div class="form-row"><label class="form-label">姓名</label><input class="form-input" id="p-name" placeholder=""></div>
+      <div class="form-row" style="grid-column: span 2;">
+        <label class="form-label">人脸照片</label>
+        <input class="form-input" type="file" id="p-face" accept="image/*" style="padding:6px 10px;">
+      </div>
+      <div class="form-row" style="grid-column: span 2;">
+        <label class="form-label">所属设备 * (可多选)</label>
+        <div id="device-checkbox-list" style="max-height:180px;overflow-y:auto;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:10px;"></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px;">勾选设备即可添加人员</div>
+      </div>
+      <div class="form-row" style="grid-column: span 2;">
+        <label class="form-label">有效期截止</label>
+        <input class="form-input" id="p-end" type="date" value="2037-12-31">
+      </div>
     </div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('personModal')">取消</button><button class="btn btn-primary" id="personSaveBtn" onclick="savePerson()">保存人员</button></div>
   </div>
@@ -366,16 +590,20 @@
   </div>
 </div>
 
-<!-- 确认模态框 -->
+<!-- 确认模态框（取消按钮添加 id） -->
 <div class="modal-overlay" id="confirmModal">
   <div class="modal" style="width:360px">
     <div class="modal-header"><div class="modal-title" id="confirmTitle">确认操作</div><button class="modal-close" onclick="closeModal('confirmModal')">✕</button></div>
     <p class="confirm-text" id="confirmText"></p>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('confirmModal')">取消</button><button class="btn btn-danger" id="confirmOk">确认</button></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="confirmCancel" onclick="closeModal('confirmModal')">取消</button>
+      <button class="btn btn-danger" id="confirmOk">确认</button>
+    </div>
   </div>
 </div>
 
 <div class="toast-container" id="tc"></div>
+</div>
 
 <script>
 const API = window.location.origin;
@@ -390,9 +618,78 @@ let editPersonId = null;
 let faceUid = null;
 let logData = [];
 let logFilter = '';
+let logRefreshTimer = null;
+let devicePageMode = false;
+let currentDevicePageData = [];
 
-function getPersons(did) { return JSON.parse(localStorage.getItem(`dh_p_${did}`) || '[]'); }
-function setPersons(did, a) { localStorage.setItem(`dh_p_${did}`, JSON.stringify(a)); }
+// 登录相关
+async function checkLogin() {
+    const auth = getCookie("auth");
+    if (auth) { showMainApp(); return; }
+    try {
+        const resp = await fetch('/api/user', { credentials: 'include' });
+        const data = await resp.json();
+        if (data.code === 0 && data.data && data.data.username) showMainApp();
+        else showLoginPage();
+    } catch (e) { showLoginPage(); }
+}
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+}
+function showLoginPage() {
+    document.getElementById('login-page').style.display = 'flex';
+    document.getElementById('main-app').style.display = 'none';
+    document.getElementById('login-username').focus();
+}
+function showMainApp() {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('main-app').style.display = 'flex';
+    initMain();
+}
+async function doLogin() {
+    const username = document.getElementById('login-username').value.trim();
+    const password = document.getElementById('login-password').value.trim();
+    const msgEl = document.getElementById('login-msg');
+    if (!username || !password) { msgEl.textContent = '请输入用户名和密码'; return; }
+    try {
+        const resp = await fetch(`${API}/api/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
+        const data = await resp.json();
+        if (data.code === 0) showMainApp();
+        else msgEl.textContent = data.msg || '登录失败';
+    } catch (e) { msgEl.textContent = '网络错误，登录失败'; }
+}
+async function doLogout() {
+    await fetch(`${API}/api/logout`, { method: 'POST' });
+    document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    showLoginPage();
+}
+function showRegisterForm() {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('register-form').style.display = 'block';
+    document.getElementById('login-msg').textContent = '';
+}
+function showLoginForm() {
+    document.getElementById('login-form').style.display = 'block';
+    document.getElementById('register-form').style.display = 'none';
+    document.getElementById('login-msg').textContent = '';
+}
+async function doRegister() {
+    const username = document.getElementById('reg-username').value.trim();
+    const password = document.getElementById('reg-password').value.trim();
+    const password2 = document.getElementById('reg-password2').value.trim();
+    const msgEl = document.getElementById('login-msg');
+    if (!username || !password) { msgEl.textContent = '用户名和密码不能为空'; return; }
+    if (password !== password2) { msgEl.textContent = '两次密码输入不一致'; return; }
+    try {
+        const resp = await fetch(`${API}/api/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
+        const data = await resp.json();
+        if (data.code === 0) { alert('注册成功，请登录'); showLoginForm(); }
+        else msgEl.textContent = data.msg || '注册失败';
+    } catch (e) { msgEl.textContent = '网络错误，注册失败'; }
+}
 
 // ========== 区域 API ==========
 async function loadAreas() {
@@ -416,25 +713,19 @@ async function addArea() {
     const name = document.getElementById('newAreaName').value.trim();
     if (!name) { toast('error', '请输入区域名称'); return; }
     try {
-        const resp = await fetch(`${API}/api/areas`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name })
-        });
+        const resp = await fetch(`${API}/api/areas`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) });
         const data = await resp.json();
         if (data.code === 0) {
             toast('success', `区域「${name}」已添加`);
             document.getElementById('newAreaName').value = '';
             await loadAreas();
             await loadDevicesFromServer();
-        } else {
-            toast('error', data.msg);
-        }
+        } else { toast('error', data.msg); }
     } catch (e) { toast('error', '添加失败'); }
 }
 
 async function deleteArea(areaName) {
-    if (!confirm(`确定删除区域「${areaName}」吗？该区域下的设备将无法正常分组，建议先移动设备。`)) return;
+    if (!confirm(`确定删除区域「${areaName}」吗？`)) return;
     try {
         const resp = await fetch(`${API}/api/areas/${encodeURIComponent(areaName)}`, { method: 'DELETE' });
         const data = await resp.json();
@@ -442,86 +733,111 @@ async function deleteArea(areaName) {
             toast('success', `区域「${areaName}」已删除`);
             await loadAreas();
             await loadDevicesFromServer();
-        } else {
-            toast('error', data.msg);
-        }
+        } else { toast('error', data.msg); }
     } catch (e) { toast('error', '删除失败'); }
 }
 
 function renderAreaSelect() {
     const select = document.getElementById('d-area');
     if (!select) return;
-    const currentVal = select.value;
     select.innerHTML = '';
-    areas.forEach(area => {
-        const option = document.createElement('option');
-        option.value = area;
-        option.textContent = area;
-        select.appendChild(option);
-    });
-    if (currentVal && areas.includes(currentVal)) select.value = currentVal;
-    else if (areas.length) select.value = areas[0];
+    areas.forEach(area => { const o = document.createElement('option'); o.value = area; o.textContent = area; select.appendChild(o); });
+    if (areas.length) select.value = areas[0];
 }
 
 function renderAreaList() {
     const tbody = document.getElementById('areaListBody');
     if (!tbody) return;
-    if (!areas.length) {
-        tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;padding:20px">暂无区域，请添加</td></tr>';
-        return;
-    }
-    tbody.innerHTML = areas.map(area => `
-        <tr>
-            <td>${escapeHtml(area)}</td>
-            <td><button class="btn btn-danger btn-sm" onclick="deleteArea('${escapeHtml(area)}')">删除</button></td>
-        </tr>
-    `).join('');
+    if (!areas.length) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;padding:20px">暂无区域</td></tr>'; return; }
+    tbody.innerHTML = areas.map(area => `<tr><td>${escapeHtml(area)}</td><td><button class="btn btn-danger btn-sm" onclick="deleteArea('${escapeHtml(area)}')">删除</button></td></tr>`).join('');
 }
 
-function openAreaModal() {
-    renderAreaList();
-    openModal('areaModal');
-}
+function openAreaModal() { renderAreaList(); openModal('areaModal'); }
 
 // ========== 设备 API ==========
 async function loadDevicesFromServer() {
     try {
         const resp = await fetch(`${API}/api/devices`);
         const data = await resp.json();
-        if (data.code === 0) {
-            devices = data.data;
-            renderAccessGrid();
-            renderDevTable();
-            fillPersonDevSel();
-            toast('info', `已加载 ${devices.length} 个设备`);
-        } else {
-            toast('error', '加载设备列表失败: ' + data.msg);
-        }
-    } catch (e) {
-        console.error('loadDevicesFromServer error:', e);
-        toast('error', '无法连接服务器，请检查后端是否运行');
-    }
+        if (data.code === 0) { devices = data.data; renderAccessGrid(); renderDevTable(); fillPersonDevSel(); }
+        else toast('error', data.msg);
+    } catch (e) { toast('error', '无法连接服务器'); }
 }
 
-async function refreshDevices() {
-    await loadDevicesFromServer();
+async function refreshDevices() { await loadDevicesFromServer(); }
+
+function compareIP(ipA, ipB) { const pA=ipA.split('.').map(Number), pB=ipB.split('.').map(Number); for(let i=0;i<4;i++) if(pA[i]!==pB[i]) return pA[i]-pB[i]; return 0; }
+function sortDevices(devArray) { const order = {}; areas.forEach((a,i)=>order[a]=i); return [...devArray].sort((a,b)=>(order[a.area]??9999)-(order[b.area]??9999)||compareIP(a.ip,b.ip)); }
+
+function renderDevTable(filter='') {
+    const tbody = document.getElementById('devBody');
+    let data = filter ? devices.filter(d=>d.name.includes(filter)||d.ip.includes(filter)) : devices;
+    data = sortDevices(data);
+    const online = devices.filter(d=>d.online).length;
+    document.getElementById('stat-total').textContent = devices.length;
+    document.getElementById('stat-online').textContent = online;
+    document.getElementById('stat-offline').textContent = devices.length - online;
+    if (!data.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><p>暂无设备</p></div></td></tr>`; return; }
+    tbody.innerHTML = data.map(d => `<tr>
+        <td><strong>${escapeHtml(d.name)}</strong>${d.note?`<br><span style="font-size:11.5px;color:var(--text3)">${escapeHtml(d.note)}</span>`:''}</td>
+        <td><span class="mono">${d.ip}</span></td><td><span class="mono">${d.port}</span></td><td><span class="mono">${escapeHtml(d.username)}</span></td>
+        <td><span class="badge bgr">${escapeHtml(d.area)}</span></td>
+        <td><span class="badge ${d.online?'bg':'br'}">${d.online?'在线':'离线'}</span></td>
+        <td><div class="dev-actions"><button class="btn btn-ghost btn-sm" onclick="openDeviceModal(${d.id})">⚙ 设置</button><button class="btn btn-danger btn-sm" onclick="confirmDelDev(${d.id})">删除</button></div></td>
+    </tr>`).join('');
+}
+
+function filterDevices(v) { renderDevTable(v); }
+
+function openDeviceModal(id=null) {
+    editDevId = id;
+    document.getElementById('devModalTitle').textContent = id ? '编辑设备' : '添加设备';
+    renderAreaSelect();
+    if (id) {
+        const d = devices.find(x=>x.id===id);
+        if (d) {
+            document.getElementById('d-name').value = d.name;
+            document.getElementById('d-ip').value = d.ip;
+            document.getElementById('d-port').value = d.port;
+            document.getElementById('d-area').value = d.area;
+            document.getElementById('d-user').value = d.username;
+            document.getElementById('d-pass').value = d.password;
+            document.getElementById('d-note').value = d.note||'';
+        }
+    } else {
+        ['d-name','d-ip','d-port','d-user','d-pass','d-note'].forEach(f=>document.getElementById(f).value='');
+        if (areas.length) document.getElementById('d-area').value = areas[0];
+    }
+    openModal('devModal');
+}
+
+async function saveDevice() {
+    const name = document.getElementById('d-name').value.trim();
+    const ip = document.getElementById('d-ip').value.trim();
+    if (!name||!ip) { toast('error','请填写设备名称和 IP 地址'); return; }
+    const area = document.getElementById('d-area').value;
+    if (!area) { toast('error','请选择区域'); return; }
+    const obj = { name, ip, port: parseInt(document.getElementById('d-port').value) || 37777, area, username: document.getElementById('d-user').value || 'admin', password: document.getElementById('d-pass').value || '', note: document.getElementById('d-note').value || '' };
+    let res;
+    if (editDevId) {
+        res = await updateDeviceToServer(editDevId, obj);
+        if (res.code===0) toast('success', `设备「${name}」已更新`);
+        else toast('error', `更新失败：${res.msg}`);
+    } else {
+        res = await addDeviceToServer(obj);
+        if (res.code===0) toast('success', `设备「${name}」已添加`);
+        else toast('error', `添加失败：${res.msg}`);
+    }
+    if (res.code===0) { closeModal('devModal'); await loadDevicesFromServer(); }
 }
 
 async function addDeviceToServer(device) {
-    const resp = await fetch(`${API}/api/devices`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(device)
-    });
+    const resp = await fetch(`${API}/api/devices`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(device) });
     return resp.json();
 }
 
 async function updateDeviceToServer(id, device) {
-    const resp = await fetch(`${API}/api/devices/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(device)
-    });
+    const resp = await fetch(`${API}/api/devices/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(device) });
     return resp.json();
 }
 
@@ -530,17 +846,24 @@ async function deleteDeviceFromServer(id) {
     return resp.json();
 }
 
+async function confirmDelDev(id) {
+    const d = devices.find(x=>x.id===id);
+    if (!d) return;
+    setConfirm('删除设备', `确定删除设备 <span class="confirm-hi">「${escapeHtml(d.name)}」</span>（${escapeHtml(d.ip)}）？相关人员数据将一并清除。`, async () => {
+        const res = await deleteDeviceFromServer(id);
+        if (res.code===0) {
+            toast('success', `已删除设备「${d.name}」`);
+            await loadDevicesFromServer();
+        } else { toast('error', `删除失败：${res.msg}`); }
+    });
+}
+
 // ========== 通用 API 请求（携带设备凭证）==========
 async function apiRequest(method, path, device, bodyData = null, isFormData = false) {
     let url = API + path;
     let options = { method, headers: {} };
     if (method === 'GET' && device) {
-        const params = new URLSearchParams({
-            device_ip: device.ip,
-            device_port: device.port,
-            username: device.username,
-            password: device.password
-        });
+        const params = new URLSearchParams({ device_ip: device.ip, device_port: device.port, username: device.username, password: device.password });
         url += (url.includes('?') ? '&' : '?') + params.toString();
     }
     if (bodyData) {
@@ -552,21 +875,10 @@ async function apiRequest(method, path, device, bodyData = null, isFormData = fa
             options.body = bodyData;
         } else {
             options.headers['Content-Type'] = 'application/json';
-            options.body = JSON.stringify({
-                ...bodyData,
-                device_ip: device.ip,
-                device_port: device.port,
-                username: device.username,
-                password: device.password
-            });
+            options.body = JSON.stringify({ ...bodyData, device_ip: device.ip, device_port: device.port, username: device.username, password: device.password });
         }
     } else if (method !== 'GET' && device) {
-        const params = new URLSearchParams({
-            device_ip: device.ip,
-            device_port: device.port,
-            username: device.username,
-            password: device.password
-        });
+        const params = new URLSearchParams({ device_ip: device.ip, device_port: device.port, username: device.username, password: device.password });
         url += (url.includes('?') ? '&' : '?') + params.toString();
     }
     const resp = await fetch(url, options);
@@ -576,11 +888,7 @@ async function apiRequest(method, path, device, bodyData = null, isFormData = fa
 // ========== 健康检查 ==========
 async function checkHealth() {
     let ok = false;
-    try { 
-        const r = await fetch(API + '/api/health'); 
-        const data = await r.json(); 
-        ok = data.code === 0; 
-    } catch(e) { console.warn('Health check failed', e); }
+    try { const r = await fetch(API + '/api/health'); const data = await r.json(); ok = data.code === 0; } catch(e) { console.warn('Health check failed', e); }
     document.getElementById('srvDot').className = ok ? 'status-dot' : 'status-dot offline';
     document.getElementById('srvLabel').textContent = ok ? '服务已连接' : '服务未连接';
     ['access','devices','persons'].forEach(p => document.getElementById('banner-'+p).classList.toggle('show', !ok));
@@ -588,112 +896,56 @@ async function checkHealth() {
 
 // ========== 页面导航 ==========
 function showPage(name) {
+    stopAutoRefresh();
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-'+name).classList.add('active');
     document.querySelectorAll('.nav-item').forEach((n,i) => n.classList.toggle('active', ['access','devices','persons'][i] === name));
     document.getElementById('breadcrumb').innerHTML = `<span>${{access:'门禁控制',devices:'设备管理',persons:'人员管理'}[name]}</span>`;
     document.getElementById('topbarActions').innerHTML = '';
-    if (name === 'devices') {
-        if (areas.length === 0) {
-            loadAreas().then(() => renderDevTable());
-        } else {
-            renderDevTable();
-        }
-    }
+    if (name === 'devices') { if (areas.length === 0) { loadAreas().then(() => renderDevTable()); } else { renderDevTable(); } }
     if (name==='persons') fillPersonDevSel();
     if (name==='access') { showAccessList(); renderAccessGrid(); }
     checkHealth();
 }
 
 // ========== 门禁控制模块 ==========
-function renderAccessGrid() {
-    const container = document.getElementById('access-areas-container');
-    if (!container) return;
-
-    if (devices.length === 0) {
-        container.innerHTML = `<div class="empty-state"><div class="empty-icon">📡</div><p>暂无设备，请前往“设备管理”添加</p></div>`;
-        return;
-    }
-
-    const devicesByArea = {};
-    devices.forEach(d => {
-        const area = d.area || '未分组';
-        if (!devicesByArea[area]) devicesByArea[area] = [];
-        devicesByArea[area].push(d);
-    });
-
-    let html = '';
-    areas.forEach(areaName => {
-        const areaDevices = devicesByArea[areaName] || [];
-        if (areaDevices.length === 0) return;
-
-        html += `
-            <div class="area-section">
-                <div class="area-title">
-                    <span>${getAreaIcon(areaName)}</span> ${escapeHtml(areaName)}
-                    <span style="margin-left:8px;font-size:11px;color:var(--text3);">(${areaDevices.length}个设备)</span>
-                </div>
-                <div class="device-grid" id="grid-${areaName.replace(/\s+/g, '_')}"></div>
-            </div>
-        `;
-    });
-
-    const extraAreas = Object.keys(devicesByArea).filter(area => !areas.includes(area));
-    extraAreas.forEach(areaName => {
-        const areaDevices = devicesByArea[areaName];
-        if (areaDevices.length === 0) return;
-
-        html += `
-            <div class="area-section">
-                <div class="area-title">
-                    <span>📁</span> ${escapeHtml(areaName)}
-                    <span style="margin-left:8px;font-size:11px;color:var(--text3);">(${areaDevices.length}个设备)</span>
-                </div>
-                <div class="device-grid" id="grid-${areaName.replace(/\s+/g, '_')}"></div>
-            </div>
-        `;
-    });
-
-    container.innerHTML = html;
-
-    devices.forEach(d => {
-        const area = d.area || '未分组';
-        const gridId = `grid-${area.replace(/\s+/g, '_')}`;
-        const grid = document.getElementById(gridId);
-        if (grid) {
-            const card = createDeviceCard(d);
-            grid.appendChild(card);
-        }
-    });
-}
-
-function getAreaIcon(areaName) {
-    const iconMap = {'A区':'🏢','B区':'🏗️','C区':'📦','传动轴':'⚙️'};
-    return iconMap[areaName] || '📍';
-}
-
+function getAreaIcon(areaName) { const map = {'传动轴':'⚙️','部件':'🏗️','底零':'📦','精铸':'🏭','车轮':'🚗','其他':'📍'}; return map[areaName] || '📍'; }
 function createDeviceCard(device) {
     const card = document.createElement('div');
     card.className = 'device-card';
     card.onclick = () => openDetail(device);
-    card.innerHTML = `
-        <div class="dc-status"><span class="badge bgr" style="font-size:10.5px">● 本地</span></div>
-        <div class="dc-icon">🚪</div>
-        <div class="dc-name">${escapeHtml(device.name)}</div>
-        <div class="dc-ip">${device.ip}:${device.port}</div>
-        ${device.note ? `<div style="font-size:11.5px;color:var(--text3);margin-top:4px">${escapeHtml(device.note)}</div>` : ''}
-    `;
+    card.innerHTML = `<div class="dc-status"><span class="badge bgr" style="font-size:10.5px">● 本地</span></div><div class="dc-icon">🚪</div><div class="dc-name">${escapeHtml(device.name)}</div><div class="dc-ip">${device.ip}:${device.port}</div>${device.note ? `<div style="font-size:11.5px;color:var(--text3);margin-top:4px">${escapeHtml(device.note)}</div>` : ''}`;
     return card;
 }
-
-function showAccessList() {
-    document.getElementById('access-list').style.display = 'block';
-    document.getElementById('access-detail').classList.remove('active');
-    document.getElementById('breadcrumb').innerHTML = '<span>门禁控制</span>';
-    renderAccessGrid();
+function toggleArea(gridId, iconId) { const grid = document.getElementById(gridId); const icon = document.getElementById(iconId); if (!grid || !icon) return; if (grid.style.display === 'none' || grid.style.display === '') { grid.style.display = 'grid'; icon.textContent = '▼'; } else { grid.style.display = 'none'; icon.textContent = '▶'; } }
+function renderAccessGrid() {
+    const container = document.getElementById('access-areas-container');
+    if (!container) return;
+    if (devices.length === 0) { container.innerHTML = `<div class="empty-state"><div class="empty-icon">📡</div><p>暂无设备，请前往“设备管理”添加</p></div>`; return; }
+    const devicesByArea = {};
+    devices.forEach(d => { const area = d.area || '未分组'; if (!devicesByArea[area]) devicesByArea[area] = []; devicesByArea[area].push(d); });
+    let html = '';
+    areas.forEach(areaName => {
+        const areaDevices = devicesByArea[areaName] || [];
+        if (areaDevices.length === 0) return;
+        const gridId = `grid-${areaName.replace(/\s+/g, '_')}`;
+        const iconId = `icon-${gridId}`;
+        html += `<div class="area-section"><div class="area-title" onclick="toggleArea('${gridId}','${iconId}')"><span id="${iconId}" style="font-size:14px;margin-right:6px;">▶</span><span>${getAreaIcon(areaName)}</span> ${escapeHtml(areaName)}<span style="margin-left:8px;font-size:11px;color:var(--text3);">(${areaDevices.length}个设备)</span></div><div class="device-grid" id="${gridId}" style="display:none;"></div></div>`;
+    });
+    const extraAreas = Object.keys(devicesByArea).filter(area => !areas.includes(area));
+    extraAreas.forEach(areaName => {
+        const areaDevices = devicesByArea[areaName];
+        if (areaDevices.length === 0) return;
+        const gridId = `grid-${areaName.replace(/\s+/g, '_')}`;
+        const iconId = `icon-${gridId}`;
+        html += `<div class="area-section"><div class="area-title" onclick="toggleArea('${gridId}','${iconId}')"><span id="${iconId}" style="font-size:14px;margin-right:6px;">▶</span><span>📁</span> ${escapeHtml(areaName)}<span style="margin-left:8px;font-size:11px;color:var(--text3);">(${areaDevices.length}个设备)</span></div><div class="device-grid" id="${gridId}" style="display:none;"></div></div>`;
+    });
+    container.innerHTML = html;
+    devices.forEach(d => { const area = d.area || '未分组'; const gridId = `grid-${area.replace(/\s+/g, '_')}`; const grid = document.getElementById(gridId); if (grid) grid.appendChild(createDeviceCard(d)); });
 }
+function showAccessList() { stopAutoRefresh(); document.getElementById('access-list').style.display = 'block'; document.getElementById('access-detail').classList.remove('active'); document.getElementById('breadcrumb').innerHTML = '<span>门禁控制</span>'; renderAccessGrid(); }
 
-// ========== 日志相关 ==========
+// ========== 日志 ==========
 function getLocalDateString(date = new Date()) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -731,7 +983,9 @@ async function fetchLogDataAndProcess(silent = false) {
                 logData.sort((a, b) => new Date(b.time) - new Date(a.time));
             }
             renderLog();
-            if (!silent) toast('info', uniqueNew.length ? `新增 ${uniqueNew.length} 条开门记录` : '没有新的开门记录');
+            if (!silent) {
+                toast('info', uniqueNew.length ? `新增 ${uniqueNew.length} 条开门记录` : '没有新的开门记录');
+            }
         } else {
             throw new Error(data.msg || '请求失败');
         }
@@ -744,7 +998,7 @@ async function fetchLogDataAndProcess(silent = false) {
     }
 }
 
-async function fetchLog() { await doFetchLog(false); }
+function filterLog() { logFilter = document.getElementById('logSearch').value.toLowerCase(); renderLog(); }
 
 async function doFetchLog(silent = false) {
     if (!currentDev) return;
@@ -790,7 +1044,50 @@ function renderLog() {
     `).join('');
 }
 
+async function silentRefreshLog() {
+    if (!currentDev) return;
+    // 确定开始时间：列表中最新的记录时间，若无则当日 00:00:00
+    let startTime;
+    if (logData.length > 0) {
+        startTime = logData[0].time; // 最新记录
+    } else {
+        startTime = getLocalDateString() + ' 00:00:00';
+    }
+    const endTime = getLocalDateString() + ' 23:59:59';
+    
+    const url = `/api/log?start=${encodeURIComponent(startTime)}&end=${encodeURIComponent(endTime)}&device_ip=${encodeURIComponent(currentDev.ip)}&device_port=${currentDev.port}&username=${encodeURIComponent(currentDev.username)}&password=${encodeURIComponent(currentDev.password)}`;
+    try {
+        const r = await fetch(API + url);
+        const data = await r.json();
+        if (data.code === 0) {
+            const newRecords = data.data.records || [];
+            const existingKeys = new Set(logData.map(r => `${r.time}|${r.door}|${r.user_id}|${r.method}|${r.status}`));
+            const uniqueNew = newRecords.filter(r => !existingKeys.has(`${r.time}|${r.door}|${r.user_id}|${r.method}|${r.status}`));
+            if (uniqueNew.length > 0) {
+                logData = [...uniqueNew, ...logData];
+                logData.sort((a, b) => new Date(b.time) - new Date(a.time));
+                renderLog();
+            }
+        }
+    } catch (e) {
+        console.warn('自动刷新日志失败:', e);
+    }
+}
+
+function startAutoRefresh() {
+    stopAutoRefresh();
+    logRefreshTimer = setInterval(silentRefreshLog, 3000);
+}
+
+function stopAutoRefresh() {
+    if (logRefreshTimer) {
+        clearInterval(logRefreshTimer);
+        logRefreshTimer = null;
+    }
+}
+
 function openDetail(dev) {
+    stopAutoRefresh();
     currentDev = dev;
     currentDoor = 0;
     logFilter = '';
@@ -806,7 +1103,9 @@ function openDetail(dev) {
     document.getElementById('logEnd').value = today;
     const tbody = document.getElementById('logBody');
     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:20px"><span class="spinner"></span> 加载中...</td></tr>`;
-    fetchLogDataAndProcess(true).catch(() => {
+    fetchLogDataAndProcess(true).then(() => {
+        startAutoRefresh();
+    }).catch(() => {
         tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:24px"><div class="empty-icon">⚠️</div><p>加载失败</p></div></td></tr>`;
     });
 }
@@ -856,11 +1155,12 @@ function renderDevTable(filter='') {
     const tbody = document.getElementById('devBody');
     let data = filter ? devices.filter(d => d.name.includes(filter) || d.ip.includes(filter)) : devices;
     data = sortDevices(data);
+    const onlineCount = devices.filter(d => d.online).length;
     document.getElementById('stat-total').textContent = devices.length;
-    document.getElementById('stat-online').textContent = '—';
-    document.getElementById('stat-offline').textContent = '—';
+    document.getElementById('stat-online').textContent = onlineCount;
+    document.getElementById('stat-offline').textContent = devices.length - onlineCount;
     if (!data.length) {
-        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:24px"><div class="empty-icon">📡</div><p>暂无设备，请点击右上角添加</p></div></td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state" style="padding:24px"><div class="empty-icon">📡</div><p>暂无设备</p></div></td></tr>`;
         return;
     }
     tbody.innerHTML = data.map(d => `
@@ -870,6 +1170,7 @@ function renderDevTable(filter='') {
             <td><span class="mono">${d.port}</span></td>
             <td><span class="mono">${escapeHtml(d.username)}</span></td>
             <td><span class="badge bgr">${escapeHtml(d.area)}</span></td>
+            <td><span class="badge ${d.online ? 'bg' : 'br'}">${d.online ? '在线' : '离线'}</span></td>
             <td><div class="dev-actions"><button class="btn btn-ghost btn-sm" onclick="openDeviceModal(${d.id})">⚙ 设置</button><button class="btn btn-danger btn-sm" onclick="confirmDelDev(${d.id})">删除</button></div></td>
         </tr>
     `).join('');
@@ -929,6 +1230,29 @@ async function saveDevice() {
     }
 }
 
+async function addDeviceToServer(device) {
+    const resp = await fetch(`${API}/api/devices`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(device)
+    });
+    return resp.json();
+}
+
+async function updateDeviceToServer(id, device) {
+    const resp = await fetch(`${API}/api/devices/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(device)
+    });
+    return resp.json();
+}
+
+async function deleteDeviceFromServer(id) {
+    const resp = await fetch(`${API}/api/devices/${id}`, { method: 'DELETE' });
+    return resp.json();
+}
+
 async function confirmDelDev(id) {
     const d = devices.find(x=>x.id===id);
     if (!d) return;
@@ -937,6 +1261,7 @@ async function confirmDelDev(id) {
         if (res.code===0) {
             toast('success', `已删除设备「${d.name}」`);
             localStorage.removeItem(`dh_p_${id}`);
+            localStorage.removeItem(`dh_total_${id}`);
             await loadDevicesFromServer();
         } else {
             toast('error', `删除失败：${res.msg}`);
@@ -944,18 +1269,122 @@ async function confirmDelDev(id) {
     });
 }
 
-// ========== 人员管理模块 ==========
-let deviceUserTotal = 0;
+// ========== 人员管理模块（全部使用服务端 persons.json）==========
 let deviceUserPage = 1;
-let deviceUserPageSize = 20;
-let deviceUserData = [];
-async function loadDeviceUsersPage(page) {
-    if (!currentPDevObj) {
-        toast('error', '请先选择设备');
+let deviceUserPageSize = 20;       // 本地分页每页条数
+let currentViewMode = 'local';
+let persons = [];
+
+// ---------- 从服务端加载当前设备人员（本地数据） ----------
+async function refreshPersonList() {
+    if (!currentPDevObj) return;
+    try {
+        const resp = await fetch(`${API}/api/persons?device_id=${currentPDevObj.id}`);
+        const data = await resp.json();
+        if (data.code === 0) {
+            persons = data.data;
+            // 重置页码到第一页
+            deviceUserPage = 1;
+            renderPersonTable();
+            updatePaginationUI();
+        }
+    } catch (e) {
+        toast('error', '加载人员列表失败');
+    }
+}
+
+// ---------- 渲染当前页的本地人员表格（支持搜索过滤）----------
+function renderPersonTable(filter = '', customData = null) {
+    if (!currentPDevObj) return;
+    const tbody = document.getElementById('personBody');
+    let data = customData ? [...customData] : [...persons];
+    if (filter) data = data.filter(p => (p.name + p.user_id).toLowerCase().includes(filter));
+
+    let pageData;
+    if (!customData) {
+        const start = (deviceUserPage - 1) * deviceUserPageSize;
+        const end = start + deviceUserPageSize;
+        pageData = data.slice(start, end);
+    } else {
+        pageData = data;
+    }
+
+    if (!pageData.length) {
+        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><p>暂无人员</p></div></td></tr>`;
         return;
     }
 
+    tbody.innerHTML = pageData.map(p => {
+        const hasFace = (p.has_face === true || p.has_face === 'true' || p.has_face === 1);
+        let faceHtml = '';
+        if (hasFace) faceHtml = '<span class="badge bb">已录入</span>';
+        else if (p.has_face === false || p.has_face === 'false' || p.has_face === 0) faceHtml = '<span class="badge bgr">未录入</span>';
+        else faceHtml = '<span class="badge by">未知</span>';
+
+        return `
+        <tr>
+            <td><span class="mono">${escapeHtml(p.user_id)}</span></td>
+            <td><strong style="color:var(--text)">${escapeHtml(p.name)}</strong></td>
+            <td><span class="mono" style="font-size:11.5px">${escapeHtml(p.valid_end || '—')}</span></td>
+            <td><span class="badge ${(p.status || 0) === 0 ? 'bg' : 'br'}">${(p.status || 0) === 0 ? '正常' : '冻结'}</span></td>
+            <td>${faceHtml}</td>
+            <td><div class="dev-actions">
+                <button class="btn btn-ghost btn-sm" onclick="openPersonModal('${escapeHtml(p.user_id)}')">编辑</button>
+                ${!hasFace ? `<button class="btn btn-blue btn-sm" onclick="openFaceModal('${escapeHtml(p.user_id)}')">录入人脸</button>` : ''}
+                <button class="btn btn-danger btn-sm" onclick="confirmDelPerson('${escapeHtml(p.user_id)}')">删除</button>
+            </div></td>
+        </tr>`;
+    }).join('');
+}
+
+// ---------- 设备选择框填充 ----------
+function fillPersonDevSel() {
+    const sel = document.getElementById('personDevSel');
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">-- 请选择设备 --</option>';
+    devices.forEach(d => {
+        const o = document.createElement('option');
+        o.value = d.id;
+        o.textContent = `${d.name}  (${d.ip})`;
+        sel.appendChild(o);
+    });
+    if (prev && devices.some(d => d.id == prev)) sel.value = prev;
+    else sel.value = '';
+}
+
+// ---------- 切换设备时自动加载该设备的人员 ----------
+function onPersonDeviceChange() {
+    const devId = parseInt(document.getElementById('personDevSel').value);
+    currentPDevObj = devices.find(d => d.id === devId) || null;
+    const badge = document.getElementById('personDevBadge');
+    badge.innerHTML = '';
+    if (!currentPDevObj) {
+        document.getElementById('personContent').style.display = 'none';
+        document.getElementById('personPH').style.display = 'block';
+        return;
+    }
+    badge.innerHTML = `<span class="badge bb">已选择</span>`;
+    document.getElementById('personContent').style.display = 'block';
+    document.getElementById('personPH').style.display = 'none';
+    currentViewMode = 'local';
+    document.getElementById('searchUserId').value = '';
+    document.getElementById('searchUserName').value = '';
+    
+    // 加载人员列表，并恢复分页总数（优先使用缓存，否则用本地人数）
+    refreshPersonList().then(() => {
+        const cachedTotal = localStorage.getItem(`dh_total_${currentPDevObj.id}`);
+        deviceUserTotal = cachedTotal ? parseInt(cachedTotal) : persons.length;
+        deviceUserPage = 1;
+        updatePaginationUI();
+    });
+}
+
+// ---------- 分页加载设备人员（自动导入到服务端）----------
+async function loadDeviceUsersPage(page) {
+    if (!currentPDevObj) { toast('error', '请先选择设备'); return; }
+
     const btn = event?.target;
+    const originalText = btn ? btn.innerHTML : '📥 加载设备人员';
     if (btn) {
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner"></span> 加载中';
@@ -974,15 +1403,41 @@ async function loadDeviceUsersPage(page) {
         const data = await resp.json();
 
         if (data.code === 0 && data.data) {
-            deviceUserTotal = data.data.total;
-            deviceUserData = data.data.items;
+            const total = data.data.total;
+            const users = data.data.items;
+
+            // 保存总数和页码
+            localStorage.setItem(`dh_total_${currentPDevObj.id}`, total);
+            deviceUserTotal = total;
             deviceUserPage = page;
-            
-            currentViewMode = 'device';
-            renderDeviceUserTable(deviceUserData);
+
+            // 导入当前页到本地（不传has_face）
+            const personsToImport = users.map(u => ({
+                user_id: u.user_id,
+                name: u.name,
+                valid_begin: u.valid_begin || '2000-01-01',
+                valid_end: u.valid_end || '2037-12-31',
+                status: u.status || 0
+            }));
+
+            await fetch(`${API}/api/persons/import`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ device_id: currentPDevObj.id, persons: personsToImport })
+            });
+
+            // 刷新全局人员列表
+            await refreshPersonList();
+
+            // 从全局persons中筛选出当前页的用户
+            const userIds = users.map(u => u.user_id);
+            const pageData = persons.filter(p => userIds.includes(p.user_id));
+
+            // 只显示当前页数据
+            renderPersonTable('', pageData);
             updatePaginationUI();
-            
-            toast('success', `第 ${page} 页，共 ${deviceUserTotal} 人`);
+
+            toast('success', `第 ${page} 页，共 ${total} 人`);
         } else {
             toast('error', data.msg || '加载失败');
         }
@@ -992,304 +1447,117 @@ async function loadDeviceUsersPage(page) {
     } finally {
         if (btn) {
             btn.disabled = false;
-            btn.innerHTML = '📥 加载设备人员';
+            btn.innerHTML = originalText;
         }
     }
 }
 
-// 分页控件事件
-function prevPersonPage() {
-    if (deviceUserPage > 1) {
-        loadDeviceUsersPage(deviceUserPage - 1);
-    }
-}
-
-function nextPersonPage() {
-    const totalPages = Math.ceil(deviceUserTotal / deviceUserPageSize);
-    if (deviceUserPage < totalPages) {
-        loadDeviceUsersPage(deviceUserPage + 1);
-    }
-}
-
-function jumpPersonPage() {
-    const input = document.getElementById('personJumpPage');
-    const page = parseInt(input.value);
-    const totalPages = Math.ceil(deviceUserTotal / deviceUserPageSize);
-    if (!isNaN(page) && page >= 1 && page <= totalPages) {
-        loadDeviceUsersPage(page);
-    }
-    input.value = '';
-}
-
-function changePageSize() {
-    deviceUserPageSize = parseInt(document.getElementById('personPageSize').value);
-    loadDeviceUsersPage(1);
-}
-
-function renderDeviceUserTable(data) {
-    const tbody = document.getElementById('personBody');
-    if (!data || !data.length) {
-        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:24px"><div class="empty-icon">👤</div><p>未找到人员</p></div></td></tr>`;
-        return;
-    }
-    tbody.innerHTML = data.map(p => `
-        <tr>
-            <td><span class="mono">${escapeHtml(p.user_id)}</span></td>
-            <td><strong style="color:var(--text)">${escapeHtml(p.name)}</strong></td>
-            <td><span class="mono" style="font-size:11.5px">${escapeHtml(p.valid_begin || '—')} ~ ${escapeHtml(p.valid_end || '—')}</span></td>
-            <td><span class="badge ${p.status===0?'bg':'br'}">${p.status===0?'正常':'冻结'}</span></td>
-            <td><span class="badge bgr">—</span></td>
-            <td><div class="dev-actions">
-                <button class="btn btn-ghost btn-sm" onclick="importDevicePerson('${escapeHtml(p.user_id)}')">导入本地</button>
-            </div></td>
-        </tr>
-    `).join('');
-}
-
+// ---------- 分页控件更新（基于 persons 总长度）----------
 function updatePaginationUI() {
-    const totalPages = Math.ceil(deviceUserTotal / deviceUserPageSize) || 1;
-    document.getElementById('personTotal').textContent = deviceUserTotal;
+    const total = persons.length;
+    const totalPages = Math.ceil(total / deviceUserPageSize) || 1;
+    document.getElementById('personTotal').textContent = total;
     document.getElementById('personCurrentPage').textContent = deviceUserPage;
     document.getElementById('personTotalPages').textContent = totalPages;
     document.getElementById('personPrevBtn').disabled = (deviceUserPage <= 1);
     document.getElementById('personNextBtn').disabled = (deviceUserPage >= totalPages);
 }
 
+// 本地翻页
 function prevPersonPage() {
+    const totalPages = Math.ceil(persons.length / deviceUserPageSize);
     if (deviceUserPage > 1) {
         deviceUserPage--;
-        renderDeviceUserTable(deviceUserData.slice((deviceUserPage-1)*deviceUserPageSize, deviceUserPage*deviceUserPageSize));
+        renderPersonTable();
         updatePaginationUI();
     }
 }
-
 function nextPersonPage() {
-    const totalPages = Math.ceil(deviceUserTotal / deviceUserPageSize);
+    const totalPages = Math.ceil(persons.length / deviceUserPageSize);
     if (deviceUserPage < totalPages) {
         deviceUserPage++;
-        renderDeviceUserTable(deviceUserData.slice((deviceUserPage-1)*deviceUserPageSize, deviceUserPage*deviceUserPageSize));
+        renderPersonTable();
         updatePaginationUI();
     }
 }
-
 function jumpPersonPage() {
     const input = document.getElementById('personJumpPage');
-    let page = parseInt(input.value);
-    const totalPages = Math.ceil(deviceUserTotal / deviceUserPageSize);
-    if (isNaN(page) || page < 1) page = 1;
-    if (page > totalPages) page = totalPages;
-    deviceUserPage = page;
-    renderDeviceUserTable(deviceUserData.slice((page-1)*deviceUserPageSize, page*deviceUserPageSize));
-    updatePaginationUI();
+    const page = parseInt(input.value);
+    const totalPages = Math.ceil(persons.length / deviceUserPageSize);
+    if (!isNaN(page) && page >= 1 && page <= totalPages) {
+        deviceUserPage = page;
+        renderPersonTable();
+        updatePaginationUI();
+    }
     input.value = '';
 }
-
-function importDevicePerson(userId) {
-    if (!currentPDevObj) return;
-    const person = deviceUserData.find(p => p.user_id === userId);
-    if (!person) return;
-    const locals = getPersons(currentPDevObj.id);
-    if (locals.find(p => p.id === userId)) {
-        toast('error', '该人员已存在于本地');
-        return;
-    }
-    const newPerson = {
-        id: person.user_id,
-        name: person.name,
-        begin: person.valid_begin || '2000-01-01',
-        end: person.valid_end || '2037-12-31',
-        status: person.status || 0,
-        hasFace: false,
-        doors: person.doors || [0]
-    };
-    locals.push(newPerson);
-    setPersons(currentPDevObj.id, locals);
-    toast('success', `已导入 ${person.name}`);
-    if (currentViewMode === 'local') {
-        renderPersonTable();
-    }
+function changePageSize() {
+    deviceUserPageSize = parseInt(document.getElementById('personPageSize').value);
+    deviceUserPage = 1;  // 重置到第一页
+    renderPersonTable();
+    updatePaginationUI();
 }
 
-function fillPersonDevSel() {
-    const sel = document.getElementById('personDevSel');
-    const prev = sel.value;
-    sel.innerHTML = '<option value="">-- 请选择设备 --</option>';
-    devices.forEach(d => { const o = document.createElement('option'); o.value = d.id; o.textContent = `${d.name}  (${d.ip})`; sel.appendChild(o); });
-    if (prev && devices.some(d=>d.id==prev)) sel.value = prev;
-    else sel.value = '';
-}
-
-function onPersonDeviceChange() {
-    const devId = parseInt(document.getElementById('personDevSel').value);
-    currentPDevObj = devices.find(d => d.id === devId) || null;
-    const badge = document.getElementById('personDevBadge');
-    badge.innerHTML = '';
-    if (!currentPDevObj) {
-        document.getElementById('personContent').style.display = 'none';
-        document.getElementById('personPH').style.display = 'block';
-        return;
-    }
-    badge.innerHTML = `<span class="badge bb">已选择</span>`;
-    document.getElementById('personContent').style.display = 'block';
-    document.getElementById('personPH').style.display = 'none';
-    resetPersonView();
-}
-
-function renderPersonTable(filter='') {
-    if (!currentPDevObj) return;
-    const tbody = document.getElementById('personBody');
-    let data = getPersons(currentPDevObj.id);
-    if (filter) data = data.filter(p=>(p.name+p.id).toLowerCase().includes(filter));
-    if (!data.length) {
-        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:24px"><div class="empty-icon">👤</div><p>暂无人员</p></div></td></tr>`;
-        return;
-    }
-    tbody.innerHTML = data.map(p => `
-        <tr>
-            <td><span class="mono">${escapeHtml(p.id)}</span></td>
-            <td><strong style="color:var(--text)">${escapeHtml(p.name)}</strong></td>
-            <td><span class="mono" style="font-size:11.5px">${escapeHtml(p.begin||'—')} ~ ${escapeHtml(p.end||'—')}</span></td>
-            <td><span class="badge ${p.status===0?'bg':'br'}">${p.status===0?'正常':'冻结'}</span></td>
-            <td><span class="badge ${p.hasFace?'bb':'bgr'}">${p.hasFace?'✓ 已录入':'未录入'}</span></td>
-            <td><div class="dev-actions"><button class="btn btn-ghost btn-sm" onclick="openPersonModal('${escapeHtml(p.id)}')">编辑</button><button class="btn btn-blue btn-sm" onclick="${p.hasFace?`confirmDelFace('${escapeHtml(p.id)}')`:`openFaceModal('${escapeHtml(p.id)}')`}">${p.hasFace?'删除人脸':'录入人脸'}</button><button class="btn btn-danger btn-sm" onclick="confirmDelPerson('${escapeHtml(p.id)}')">删除</button></div></td>
-        </tr>
-    `).join('');
-}
-
-function filterPersons(v) { renderPersonTable(v.toLowerCase()); }
-
-function openPersonModal(uid=null) {
+// ---------- 一次性加载设备全部人员并更新到本地文件 ----------
+async function loadAllDeviceUsers() {
     if (!currentPDevObj) { toast('error', '请先选择设备'); return; }
-    editPersonId = uid;
-    document.getElementById('personModalTitle').textContent = uid ? '编辑人员' : '添加人员';
-    document.getElementById('p-id').disabled = !!uid;
-    if (uid) {
-        const p = getPersons(currentPDevObj.id).find(x=>x.id===uid);
-        if (p) {
-            document.getElementById('p-id').value = p.id;
-            document.getElementById('p-name').value = p.name;
-            document.getElementById('p-begin').value = p.begin||'2000-01-01';
-            document.getElementById('p-end').value = p.end||'2037-12-31';
-        }
-    } else {
-        ['p-id','p-name'].forEach(f=>document.getElementById(f).value='');
-        document.getElementById('p-begin').value = '2000-01-01';
-        document.getElementById('p-end').value = '2037-12-31';
-    }
-    openModal('personModal');
-}
 
-async function savePerson() {
-    if (!currentPDevObj) { toast('error', '请先选择设备'); return; }
-    const uid = document.getElementById('p-id').value.trim();
-    const name = document.getElementById('p-name').value.trim();
-    if (!uid||!name) { toast('error','请填写用户ID和姓名'); return; }
-    const obj = { id:uid, name, doors:[0], begin:document.getElementById('p-begin').value, end:document.getElementById('p-end').value, status:0 };
-    const btn = document.getElementById('personSaveBtn');
-    btn.disabled=true; btn.innerHTML='<span class="spinner"></span>';
+    const btn = event?.target;
+    const originalText = btn ? btn.innerHTML : '📥 加载设备人员';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> 加载中';
+    }
+
     try {
-        let r;
-        if (editPersonId) {
-            await apiRequest('DELETE', `/api/user/${editPersonId}`, currentPDevObj);
-            r = await apiRequest('POST', '/api/user', currentPDevObj, { user_id:uid, name });
+        const params = new URLSearchParams({
+            device_ip: currentPDevObj.ip,
+            device_port: currentPDevObj.port,
+            username: currentPDevObj.username,
+            password: currentPDevObj.password,
+            page: 1,
+            page_size: 0   // 0 表示获取全部（后端需支持）
+        });
+        const resp = await fetch(`${API}/api/device/users/all?${params}`);
+        const data = await resp.json();
+
+        if (data.code === 0 && data.data) {
+            const users = data.data.items;
+            // 构造要导入的人员数组
+            const personsToImport = users.map(u => ({
+                user_id: u.user_id,
+                name: u.name,
+                valid_begin: u.valid_begin || '2000-01-01',
+                valid_end: u.valid_end || '2037-12-31',
+                status: u.status || 0,
+            }));
+
+            // 调用导入接口，合并到公用人库
+            await fetch(`${API}/api/persons/import`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ device_id: currentPDevObj.id, persons: personsToImport })
+            });
+
+            // 刷新本地列表
+            await refreshPersonList();
+            toast('success', `已加载 ${users.length} 名人员并更新本地数据`);
         } else {
-            r = await apiRequest('POST', '/api/user', currentPDevObj, { user_id:uid, name });
+            toast('error', data.msg || '加载失败');
         }
-        if (r.code === 0) {
-            const arr = getPersons(currentPDevObj.id);
-            if (editPersonId) {
-                const idx = arr.findIndex(x=>x.id===editPersonId);
-                obj.hasFace = idx>=0 ? arr[idx].hasFace : false;
-                if (idx>=0) arr[idx]=obj; else arr.push(obj);
-            } else {
-                if (arr.find(p=>p.id===uid)) { toast('error',`用户ID「${uid}」已存在`); btn.disabled=false; btn.textContent='保存人员'; return; }
-                obj.hasFace = false;
-                arr.push(obj);
-            }
-            setPersons(currentPDevObj.id, arr);
-            toast('success', `人员「${name}」已${editPersonId?'更新':'添加'}`);
-            closeModal('personModal');
-            renderPersonTable();
-        } else {
-            toast('error', `操作失败：${r.msg}`);
+    } catch (e) {
+        console.error(e);
+        toast('error', '网络错误');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
         }
-    } catch(e) { toast('error', '无法连接服务，请检查 server.py'); }
-    btn.disabled=false; btn.textContent='保存人员';
+    }
 }
 
-function confirmDelPerson(uid) {
-    if (!currentPDevObj) return;
-    const p = getPersons(currentPDevObj.id).find(x=>x.id===uid);
-    setConfirm('删除人员', `确定删除人员 <span class="confirm-hi">「${escapeHtml(p?.name)}」（ID: ${uid}）</span>？`, async () => {
-        try {
-            const r = await apiRequest('DELETE', `/api/user/${uid}`, currentPDevObj);
-            if (r.code===0) {
-                setPersons(currentPDevObj.id, getPersons(currentPDevObj.id).filter(x=>x.id!==uid));
-                toast('success', `已删除人员「${p?.name}」`);
-                renderPersonTable();
-            } else { toast('error', `删除失败：${r.msg}`); }
-        } catch(e) { toast('error','无法连接服务'); }
-    });
-}
 
-function openFaceModal(uid) {
-    faceUid = uid;
-    document.getElementById('faceUid').textContent = uid;
-    document.getElementById('faceFile').value = '';
-    openModal('faceModal');
-}
-
-async function submitFace() {
-    if (!currentPDevObj) { toast('error', '请先选择设备'); return; }
-    const fi = document.getElementById('faceFile');
-    if (!fi.files.length) { toast('error','请选择图片'); return; }
-    const btn = document.getElementById('faceBtn');
-    btn.disabled=true; btn.innerHTML='<span class="spinner"></span>';
-    const fd = new FormData();
-    fd.append('file', fi.files[0]);
-    fd.append('max_kb', document.getElementById('face-kb').value||'0');
-    fd.append('width', document.getElementById('face-w').value||'0');
-    fd.append('height', document.getElementById('face-h').value||'0');
-    fd.append('quality', document.getElementById('face-q').value||'0');
-    fd.append('device_ip', currentPDevObj.ip);
-    fd.append('device_port', currentPDevObj.port);
-    fd.append('username', currentPDevObj.username);
-    fd.append('password', currentPDevObj.password);
-    try {
-        const url = API + `/api/face/${faceUid}`;
-        const res = await fetch(url, { method: 'POST', body: fd });
-        const r = await res.json();
-        if (r.code===0) {
-            const arr = getPersons(currentPDevObj.id);
-            const p = arr.find(x=>x.id===faceUid);
-            if (p) p.hasFace = true;
-            setPersons(currentPDevObj.id, arr);
-            toast('success', `✅ 人脸录入成功：${faceUid}`);
-            closeModal('faceModal');
-            renderPersonTable();
-        } else { toast('error', `人脸下发失败：${r.msg}`); }
-    } catch(e) { toast('error','无法连接服务'); }
-    btn.disabled=false; btn.textContent='下发人脸';
-}
-
-function confirmDelFace(uid) {
-    if (!currentPDevObj) return;
-    setConfirm('删除人脸', `确定删除用户 <span class="confirm-hi">「${uid}」</span> 的人脸？`, async () => {
-        try {
-            const r = await apiRequest('DELETE', `/api/face/${uid}`, currentPDevObj);
-            if (r.code===0) {
-                const arr = getPersons(currentPDevObj.id);
-                const p = arr.find(x=>x.id===uid);
-                if (p) p.hasFace = false;
-                setPersons(currentPDevObj.id, arr);
-                toast('success', `已删除人脸：${uid}`);
-                renderPersonTable();
-            } else { toast('error', `删除失败：${r.msg}`); }
-        } catch(e) { toast('error','无法连接服务'); }
-    });
-}
-
-// 搜索功能
+// ---------- 搜索功能（结果自动导入到服务端）----------
 async function searchById() {
     if (!currentPDevObj) { toast('error', '请先选择设备'); return; }
     const userId = document.getElementById('searchUserId').value.trim();
@@ -1307,112 +1575,60 @@ async function searchById() {
             username: currentPDevObj.username,
             password: currentPDevObj.password
         });
-        const resp = await fetch(`${API}/api/device/user/id/${encodeURIComponent(userId)}?${params}`);
+        const url = `${API}/api/device/user/id/${encodeURIComponent(userId)}?${params}`;
+        const resp = await fetch(url);
         const data = await resp.json();
 
         if (data.code === 0 && data.data) {
-            deviceUserData = [data.data];
-            deviceUserTotal = 1;
-            deviceUserPage = 1;
-            currentViewMode = 'device';
-            updatePaginationUI();
-            renderDeviceUserTable(deviceUserData);
-            toast('success', `找到用户：${data.data.name} (${data.data.user_id})`);
+            // 设备上存在该用户：导入并显示
+            const u = data.data;
+            await fetch(`${API}/api/persons/import`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    device_id: currentPDevObj.id,
+                    persons: [{
+                        user_id: u.user_id,
+                        name: u.name,
+                        valid_begin: u.valid_begin || '2000-01-01',
+                        valid_end: u.valid_end || '2037-12-31',
+                        status: u.status || 0
+                    }]
+                })
+            });
+
+            await refreshPersonList();
+            const localPerson = persons.find(p => p.user_id === userId);
+            if (localPerson) {
+                renderPersonTable('', [localPerson]);
+                toast('success', `当前设备存在用户：${localPerson.name} (${localPerson.user_id})`);
+            } else {
+                toast('error', '未找到该用户（可能数据同步异常）');
+            }
         } else {
-            toast('error', data.msg || '未找到该用户');
-            deviceUserData = [];
-            renderDeviceUserTable([]);
+            // 设备上未找到该用户：检查本地是否有关联，若有则移除
+            const cachedPerson = persons.find(p => p.user_id === userId);
+            if (cachedPerson && cachedPerson.doors && cachedPerson.doors.includes(currentPDevObj.id)) {
+                // 从当前设备移除关联
+                await fetch(`${API}/api/persons/${userId}/devices/${currentPDevObj.id}`, { method: 'DELETE' });
+                await refreshPersonList();
+            } else {
+                toast('error', data.msg || '当前设备未找到该用户');
+            }
         }
     } catch (e) {
+        console.error(e);
         toast('error', '搜索失败，请检查网络');
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
     }
 }
-// 加载设备全部人员到本地
-async function loadAllDeviceUsers() {
-    if (!currentPDevObj) {
-        toast('error', '请先选择设备');
-        return;
-    }
 
-    const btn = event.target;
-    const originalText = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> 加载中';
-
-    try {
-        const params = new URLSearchParams({
-            device_ip: currentPDevObj.ip,
-            device_port: currentPDevObj.port,
-            username: currentPDevObj.username,
-            password: currentPDevObj.password
-        });
-        const resp = await fetch(`${API}/api/device/users/all?${params}`);
-        const data = await resp.json();
-
-        console.log('加载全部人员响应:', data);
-
-        if (data.code === 0 && data.data && data.data.items) {
-            const users = data.data.items;
-            const locals = getPersons(currentPDevObj.id);
-            let addedCount = 0;
-            let skippedCount = 0;
-
-            users.forEach(u => {
-                // 处理无效日期
-                const begin = (u.valid_begin === '0-00-00' || !u.valid_begin) ? '2000-01-01' : u.valid_begin;
-                const end = (u.valid_end === '0-00-00' || !u.valid_end) ? '2037-12-31' : u.valid_end;
-
-                // 检查是否已存在
-                if (locals.find(p => p.id === u.user_id)) {
-                    skippedCount++;
-                    return;
-                }
-                const newPerson = {
-                    id: u.user_id,
-                    name: u.name,
-                    begin: begin,
-                    end: end,
-                    status: u.status || 0,
-                    hasFace: u.hasFace || false,
-                    doors: u.doors || [0]
-                };
-                locals.push(newPerson);
-                addedCount++;
-            });
-
-            setPersons(currentPDevObj.id, locals);
-            console.log(`导入完成: 新增 ${addedCount}, 跳过 ${skippedCount}`);
-
-            toast('success', `已导入 ${addedCount} 人，跳过 ${skippedCount} 人（已存在）`);
-
-            // 强制切换到本地视图并刷新表格
-            currentViewMode = 'local';
-            renderPersonTable();
-        } else {
-            toast('error', data.msg || '加载失败');
-        }
-    } catch (e) {
-        console.error('加载全部人员异常:', e);
-        toast('error', '网络错误，加载失败');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-    }
-}
-// 按姓名搜索
 async function searchByName() {
-    if (!currentPDevObj) {
-        toast('error', '请先选择设备');
-        return;
-    }
+    if (!currentPDevObj) { toast('error', '请先选择设备'); return; }
     const keyword = document.getElementById('searchUserName').value.trim();
-    if (!keyword) {
-        toast('error', '请输入姓名关键词');
-        return;
-    }
+    if (!keyword) { toast('error', '请输入姓名关键词'); return; }
 
     const btn = event.target;
     const originalText = btn.innerHTML;
@@ -1431,19 +1647,40 @@ async function searchByName() {
         const data = await resp.json();
 
         if (data.code === 0 && data.data.items.length > 0) {
-            deviceUserData = data.data.items;
-            deviceUserTotal = data.data.total;
-            deviceUserPage = 1;
-            currentViewMode = 'device';
-            updatePaginationUI();
-            renderDeviceUserTable(deviceUserData);
-            toast('success', `找到 ${deviceUserTotal} 条匹配记录`);
+            const users = data.data.items.map(u => ({
+                user_id: u.user_id,
+                name: u.name,
+                valid_begin: u.valid_begin || '2000-01-01',
+                valid_end: u.valid_end || '2037-12-31',
+                status: u.status || 0
+            }));
+
+            // 导入到本地
+            await fetch(`${API}/api/persons/import`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ device_id: currentPDevObj.id, persons: users })
+            });
+
+            // 重新加载当前设备的所有人员
+            await refreshPersonList();
+
+            // 从全局persons中筛选出匹配的用户
+            const matchedPersons = persons.filter(p =>
+                users.some(u => u.user_id === p.user_id)
+            );
+
+            if (matchedPersons.length > 0) {
+                renderPersonTable('', matchedPersons);
+                toast('success', `找到 ${matchedPersons.length} 条匹配记录`);
+            } else {
+                toast('error', '未能加载匹配的用户信息');
+            }
         } else {
             toast('error', data.msg || '未找到匹配人员');
-            deviceUserData = [];
-            renderDeviceUserTable([]);
         }
     } catch (e) {
+        console.error(e);
         toast('error', '搜索失败，请检查网络');
     } finally {
         btn.disabled = false;
@@ -1451,36 +1688,506 @@ async function searchByName() {
     }
 }
 
-function resetPersonView() {
-    currentViewMode = 'local';
+function showAllLocalPersons() {
+    if (!currentPDevObj) return;
+    // 清空搜索框
     document.getElementById('searchUserId').value = '';
     document.getElementById('searchUserName').value = '';
-    renderPersonTable();
-    toast('info', '已切换到本地人员');
+    // 重新加载当前设备的全部人员（从本地 persons.json）
+    refreshPersonList();   // 这会重置分页并渲染完整列表
 }
 
-// ========== 通用工具 ==========
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-overlay').forEach(ov => ov.addEventListener('click', e => { if (e.target===ov) ov.classList.remove('open'); }));
+// ---------- 批量添加人员----------
+async function handleBatchFolder(files) {
+    if (!currentPDevObj) { toast('error', '请先选择设备'); return; }
+    if (!files.length) return;
+    const formData = new FormData();
+    formData.append('current_device_id', currentPDevObj.id);
+    for (let f of files) formData.append('files', f);
 
-function setConfirm(title, html, cb) {
-    document.getElementById('confirmTitle').textContent = title;
-    document.getElementById('confirmText').innerHTML = html;
-    document.getElementById('confirmOk').onclick = () => { closeModal('confirmModal'); cb(); };
-    openModal('confirmModal');
+    const btn = document.querySelector('.btn-blue[onclick*="batchFolderInput"]');
+    const origText = btn ? btn.innerHTML : '📂 批量导入';
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> 导入中...'; }
+
+    try {
+        const resp = await fetch(`${API}/api/batch_import`, { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (data.code === 0) {
+            const r = data.data;
+            let resultHtml = `<div style="margin-bottom:16px;color:var(--text2);">
+                <p>📊 处理：${r.total} 条 | ✅ 成功：${r.success} 人 | ❌ 失败：${r.fail} 条</p>
+                <p>📷 人脸下发：成功 ${r.face_success || 0} / 失败 ${r.face_fail || 0}</p>
+            </div>`;
+            if (r.details && r.details.length > 0) {
+                resultHtml += `<div style="max-height:300px;overflow-y:auto;margin-bottom:12px;">
+                    <table style="width:100%;font-size:12px;color:var(--text2);">
+                        <thead><tr><th>姓名</th><th>用户编号</th><th>目标门</th><th>添加结果</th><th>人脸下发</th></tr></thead><tbody>`;
+                r.details.forEach(d => {
+                    const statusColor = d.status === '成功' ? 'var(--accent2)' : (d.status === '失败' ? 'var(--red2)' : 'var(--yellow2)');
+                    const faceColor = d.face_result.includes('成功') && !d.face_result.includes('部分') ? 'var(--accent2)' : (d.face_result === '失败' ? 'var(--red2)' : 'var(--text2)');
+                    resultHtml += `<tr style="border-bottom:1px solid var(--border);">
+                        <td>${escapeHtml(d.name)}</td><td>${escapeHtml(d.user_id)}</td><td>${escapeHtml(d.doors)}</td>
+                        <td style="color:${statusColor}">${d.status}</td><td style="color:${faceColor}">${d.face_result}</td></tr>`;
+                });
+                resultHtml += '</tbody></table></div>';
+            }
+            showResultModal('批量导入结果', resultHtml, async () => { await refreshPersonList(); });
+        } else {
+            showResultModal('批量导入结果', `<p style="color:var(--red2);">导入失败：${escapeHtml(data.msg || '未知错误')}</p>`, null);
+        }
+    } catch (e) {
+        showResultModal('批量导入结果', '<p style="color:var(--red2);">网络请求失败，请检查服务器</p>', null);
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = origText; }
+        document.getElementById('batchFolderInput').value = '';
+    }
 }
 
-function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
+function downloadTemplate() {
+    window.open(`${API}/download/template`, '_blank');
+}
+
+// ---------- 添加人员（支持多选设备）----------
+function fillPersonDeviceSelect() {
+    const container = document.getElementById('device-checkbox-list');
+    if (!container) return;
+    container.innerHTML = '';
+    devices.forEach(d => {
+        const label = document.createElement('label');
+        label.style.display = 'flex'; label.style.alignItems = 'center'; label.style.gap = '8px';
+        label.style.padding = '6px 0'; label.style.cursor = 'pointer'; label.style.borderBottom = '1px solid var(--border)';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox'; cb.value = d.id; cb.style.accentColor = 'var(--accent)';
+        const span = document.createElement('span');
+        span.textContent = `${d.name} (${d.ip})`; span.style.fontSize = '13px'; span.style.color = 'var(--text)';
+        label.appendChild(cb); label.appendChild(span);
+        container.appendChild(label);
+    });
+    // 默认勾选当前设备
+    if (currentPDevObj) {
+        const cbs = container.querySelectorAll('input[type="checkbox"]');
+        cbs.forEach(cb => {
+            if (parseInt(cb.value) === currentPDevObj.id) cb.checked = true;
+        });
+    }
+}
+
+function openPersonModal(uid = null) {
+    if (!uid && !currentPDevObj && devices.length === 0) {
+        toast('error', '请先添加设备');
+        return;
+    }
+    editPersonId = uid;
+    document.getElementById('personModalTitle').textContent = uid ? '编辑人员' : '添加人员';
+    document.getElementById('p-id').disabled = !!uid;
+    fillPersonDeviceSelect();
+
+    const container = document.getElementById('device-checkbox-list');
+    const checkboxes = container ? container.querySelectorAll('input[type="checkbox"]') : [];
+
+    if (uid) {
+        // 编辑模式：加载人员信息，并勾选其所属设备
+        const p = persons.find(x => x.user_id === uid);
+        if (p) {
+            document.getElementById('p-id').value = p.user_id;
+            document.getElementById('p-name').value = p.name;
+            // 有效期只设置截止日期，不再设置 p-begin
+            document.getElementById('p-end').value = p.valid_end || '2037-12-31';
+            checkboxes.forEach(cb => {
+                cb.checked = p.doors && p.doors.includes(parseInt(cb.value));
+            });
+        }
+    } else {
+        // 新增模式：清空输入，默认勾选当前设备
+        ['p-id', 'p-name'].forEach(f => document.getElementById(f).value = '');
+        // 不再操作 p-begin
+        document.getElementById('p-end').value = '2037-12-31';
+        checkboxes.forEach(cb => {
+            cb.checked = currentPDevObj && parseInt(cb.value) === currentPDevObj.id;
+        });
+    }
+    openModal('personModal');
+}
+
+async function savePerson() {
+    const container = document.getElementById('device-checkbox-list');
+    const checked = Array.from(container.querySelectorAll('input[type="checkbox"]:checked'))
+                        .map(cb => parseInt(cb.value));
+    if (!checked.length) {
+        toast('error', '请至少勾选一个设备');
+        return;
+    }
+
+    const uid = document.getElementById('p-id').value.trim();
+    const name = document.getElementById('p-name').value.trim();
+    if (!uid || !name) {
+        toast('error', '请填写用户ID和姓名');
+        return;
+    }
+
+    const newPerson = {
+        user_id: uid,
+        name: name,
+        valid_begin: "2000-01-01", 
+        valid_end: document.getElementById('p-end').value,
+        status: 0,
+        has_face: false,
+        doors: checked
+    };
+
+    const btn = document.getElementById('personSaveBtn');
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> 保存中';
+    const faceFileInput = document.getElementById('p-face');
+    const faceFile = faceFileInput && faceFileInput.files.length > 0 ? faceFileInput.files[0] : null;
+
+    try {
+        // 1. 向每个选中的设备下发添加命令
+        for (const did of checked) {
+            const dev = devices.find(d => d.id === did);
+            if (!dev) continue;
+            await apiRequest('POST', '/api/user', dev, { user_id: uid, name });
+        }
+
+        // 2. 更新本地 persons.json
+        await fetch(`${API}/api/persons/import`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ device_id: checked[0], persons: [newPerson] })
+        });
+
+        // 3. 如果选择了图片，下发人脸
+        let faceSuccess = 0, faceFail = 0;
+        if (faceFile) {
+            for (const did of checked) {
+                const dev = devices.find(d => d.id === did);
+                if (!dev) { faceFail++; continue; }
+                const fd = new FormData();
+                fd.append('file', faceFile);
+                fd.append('max_kb', '0');
+                fd.append('width', '0');
+                fd.append('height', '0');
+                fd.append('quality', '0');
+                fd.append('device_ip', dev.ip);
+                fd.append('device_port', dev.port);
+                fd.append('username', dev.username);
+                fd.append('password', dev.password);
+
+                try {
+                    const devRes = await fetch(`${API}/api/face/${uid}`, { method: 'POST', body: fd });
+                    const devResult = await devRes.json();
+                    if (devResult.code === 0) {
+                        faceSuccess++;
+                    } else {
+                        faceFail++;
+                        console.warn(`设备 ${dev.name} 人脸下发失败: ${devResult.msg}`);
+                    }
+                } catch (e) {
+                    faceFail++;
+                    console.warn(`设备 ${dev.name} 网络错误`);
+                }
+            }
+            // 更新本地人脸状态
+            if (faceSuccess > 0) {
+                await fetch(`${API}/api/persons/${uid}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ has_face: true })
+                });
+            }
+        }
+
+        // 提示信息
+        let msg = `人员「${name}」已添加到 ${checked.length} 个设备`;
+        if (faceFile) {
+            msg += `，人脸下发 ${faceSuccess}/${checked.length} 成功`;
+            if (faceFail > 0) msg += `，${faceFail} 失败`;
+        }
+        toast('success', msg);
+        closeModal('personModal');
+
+        // 清除文件选择
+        if (faceFileInput) faceFileInput.value = '';
+
+        // 刷新当前设备人员列表
+        if (currentPDevObj && checked.includes(currentPDevObj.id)) {
+            await refreshPersonList();
+            // 将新添加的人员移到列表最前面
+            const idx = persons.findIndex(p => p.user_id === uid);
+            if (idx > -1) {
+                const newUser = persons.splice(idx, 1)[0];
+                persons.unshift(newUser);
+            }
+            deviceUserPage = 1;
+            renderPersonTable();
+            updatePaginationUI();
+        }
+    } catch (e) {
+        toast('error', '操作失败，请检查设备连接');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+}
+
+// ---------- 删除人员 ----------
+async function confirmDelPerson(uid) {
+    if (!currentPDevObj) return;
+    const p = persons.find(x => x.user_id === uid);
+    if (!p) return;
+
+    // 获取当前用户拥有的所有设备ID
+    let userDeviceIds = [];
+    try {
+        const resp = await fetch(`${API}/api/devices`);
+        const data = await resp.json();
+        if (data.code === 0) userDeviceIds = data.data.map(d => d.id);
+    } catch (e) { toast('error', '获取设备列表失败'); return; }
+
+    const personDoors = p.doors || [];
+    // 交集：只有当前用户拥有的设备才允许操作
+    const allowedDevices = personDoors.filter(did => userDeviceIds.includes(did));
+
+    if (allowedDevices.length === 0) {
+        toast('error', '该人员没有关联您管理的设备');
+        return;
+    }
+
+    const radioHtml = `
+        <div style="margin-top:10px; text-align:left;">
+            <label><input type="radio" name="delScope" value="current" checked> 仅从当前设备移除</label><br>
+            <label><input type="radio" name="delScope" value="all"> 从我的所有关联设备删除</label>
+        </div>`;
+
+    setConfirm('删除人员', `确定对人员「${escapeHtml(p.name)}」（ID: ${uid}）执行删除？<br>您管理的关联设备：${allowedDevices.length} 台。${radioHtml}`, async () => {
+        const scope = document.querySelector('input[name="delScope"]:checked').value;
+        let targetDeviceIds = (scope === 'current') ? [currentPDevObj.id] : allowedDevices;
+        // 确保目标设备在允许范围内
+        targetDeviceIds = targetDeviceIds.filter(did => allowedDevices.includes(did));
+        if (targetDeviceIds.length === 0) {
+            toast('error', '没有可操作的设备');
+            return;
+        }
+
+        let success = 0, fail = 0;
+        for (const did of targetDeviceIds) {
+            const dev = devices.find(d => d.id === did);
+            if (!dev) { fail++; continue; }
+            try {
+                const hwResult = await apiRequest('DELETE', `/api/user/${uid}`, dev);
+                if (hwResult.code === 0) {
+                    const resp = await fetch(`${API}/api/persons/${uid}/devices/${did}`, { method: 'DELETE' });
+                    if (resp.ok) {
+                        success++;
+                        toast('success', `已从设备「${dev.name}」移除`);
+                    } else {
+                        fail++;
+                    }
+                } else {
+                    fail++;
+                    toast('error', `设备「${dev.name}」删除失败：${hwResult.msg}`);
+                }
+            } catch (e) {
+                fail++;
+                toast('error', `设备「${dev.name}」网络错误`);
+            }
+        }
+
+        if (success > 0) {
+            toast('success', `已完成：${success} 成功，${fail} 失败`);
+        } else {
+            toast('error', '所有操作均失败');
+        }
+        await refreshPersonList();   // 重新加载当前设备人员
     });
 }
 
+async function updatePersonDoors(uid, newDoors) {
+    // 如果 doors 为空，则完全删除该人员；否则更新 doors 数组
+    if (newDoors.length === 0) {
+        await fetch(`${API}/api/persons/${uid}`, { method: 'DELETE' });
+    } else {
+        await fetch(`${API}/api/persons/${uid}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ doors: newDoors })
+        });
+    }
+}
+
+// ---------- 人脸操作 ----------
+function openFaceModal(uid) {
+    faceUid = uid;
+    document.getElementById('faceUid').textContent = uid;
+    document.getElementById('faceFile').value = '';
+    openModal('faceModal');
+}
+
+async function submitFace() {
+    if (!currentPDevObj) { toast('error', '请先选择设备'); return; }
+    const fi = document.getElementById('faceFile');
+    if (!fi.files.length) { toast('error', '请选择图片'); return; }
+    const btn = document.getElementById('faceBtn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> 下发中';
+
+    try {
+        // 获取该人员所属的所有设备
+        const resp = await fetch(`${API}/api/persons`);
+        const data = await resp.json();
+        const person = (data.code === 0 ? data.data : []).find(p => p.user_id === faceUid);
+        const doors = person ? (person.doors || []) : [];
+        if (doors.length === 0) {
+            // 如果没有关联设备，至少尝试当前设备
+            doors.push(currentPDevObj.id);
+        }
+
+        let successCount = 0;
+        let failCount = 0;
+
+        for (const did of doors) {
+            const dev = devices.find(d => d.id === did);
+            if (!dev) { failCount++; continue; }
+
+            const fd = new FormData();
+            fd.append('file', fi.files[0]);
+            fd.append('max_kb', document.getElementById('face-kb').value || '0');
+            fd.append('width', document.getElementById('face-w').value || '0');
+            fd.append('height', document.getElementById('face-h').value || '0');
+            fd.append('quality', document.getElementById('face-q').value || '0');
+            fd.append('device_ip', dev.ip);
+            fd.append('device_port', dev.port);
+            fd.append('username', dev.username);
+            fd.append('password', dev.password);
+
+            try {
+                const devRes = await fetch(`${API}/api/face/${faceUid}`, { method: 'POST', body: fd });
+                const devResult = await devRes.json();
+                if (devResult.code === 0) {
+                    successCount++;
+                } else {
+                    failCount++;
+                    console.warn(`设备 ${dev.name} 失败: ${devResult.msg}`);
+                }
+            } catch (e) {
+                failCount++;
+                console.warn(`设备 ${dev.name} 网络错误`);
+            }
+        }
+
+        if (successCount > 0) {
+            // 更新 persons.json 中的 has_face 为 true
+            await fetch(`${API}/api/persons/${faceUid}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ has_face: true })
+            });
+
+            // 重新从服务端加载当前设备的人员列表，并刷新表格
+            await refreshPersonList();
+
+            toast('success', `人脸已下发 ${successCount}/${doors.length} 台设备` + (failCount > 0 ? `，${failCount} 台失败` : ''));
+            closeModal('faceModal');
+        } else {
+            toast('error', '所有设备下发均失败');
+        }
+    } catch (e) {
+        console.error(e);
+        toast('error', '网络错误');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '下发人脸';
+    }
+}
+
+async function confirmDelFace(uid) {
+    if (!currentPDevObj) return;
+    setConfirm('删除人脸', `确定删除用户 <span class="confirm-hi">「${uid}」</span> 的人脸吗？<br>将在所有关联设备上移除。`, async () => {
+        try {
+            // 获取该人员所属的所有设备
+            const resp = await fetch(`${API}/api/persons`);
+            const data = await resp.json();
+            const person = (data.code === 0 ? data.data : []).find(p => p.user_id === uid);
+            const doors = person ? (person.doors || []) : [];
+
+            if (doors.length === 0) {
+                toast('error', '该人员没有任何设备关联');
+                return;
+            }
+
+            let successCount = 0;
+            let failCount = 0;
+
+            for (const did of doors) {
+                const dev = devices.find(d => d.id === did);
+                if (!dev) {
+                    failCount++;
+                    continue;
+                }
+
+                try {
+                    const r = await apiRequest('DELETE', `/api/face/${uid}`, dev);
+                    if (r.code === 0) {
+                        successCount++;
+                    } else {
+                        failCount++;
+                        console.warn(`设备 ${dev.name} 删除人脸失败: ${r.msg}`);
+                    }
+                } catch (e) {
+                    failCount++;
+                    console.warn(`设备 ${dev.name} 网络错误`);
+                }
+            }
+
+            if (successCount > 0) {
+                // 更新本地状态
+                await fetch(`${API}/api/persons/${uid}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ has_face: false })
+                });
+                toast('success', `人脸已从 ${successCount}/${doors.length} 台设备删除` + (failCount > 0 ? `，${failCount} 台失败` : ''));
+                await refreshPersonList();
+            } else {
+                toast('error', '所有设备删除均失败');
+            }
+        } catch (e) {
+            toast('error', '网络错误');
+        }
+    });
+}
+
+// ========== 通用工具函数 ==========
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function setConfirm(title, html, cb) {
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmText').innerHTML = html;
+    document.getElementById('confirmCancel').style.display = ''; // 确保取消按钮可见
+    document.getElementById('confirmOk').onclick = () => { closeModal('confirmModal'); cb(); };
+    document.getElementById('confirmOk').className = 'btn btn-danger';
+    openModal('confirmModal');
+}
+function showResultModal(title, html, callback) {
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmText').innerHTML = html;
+    document.getElementById('confirmCancel').style.display = 'none';
+    const okBtn = document.getElementById('confirmOk');
+    okBtn.textContent = '确定';
+    okBtn.className = 'btn btn-primary';
+    okBtn.onclick = function() {
+        closeModal('confirmModal');
+        document.getElementById('confirmCancel').style.display = '';
+        okBtn.textContent = '确认';
+        okBtn.className = 'btn btn-danger';
+        if (callback) callback();
+    };
+    openModal('confirmModal');
+}
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+}
 function toast(type, msg) {
     const el = document.createElement('div');
     el.className = `toast ${type}`;
@@ -1489,15 +2196,16 @@ function toast(type, msg) {
     setTimeout(() => el.remove(), 3100);
 }
 
-// ========== 初始化 ==========
-async function init() {
+async function initMain() {
     await loadAreas();
     await loadDevicesFromServer();
     checkHealth();
     setInterval(checkHealth, 10000);
+    const sel = document.getElementById('personDevSel');
+    if (sel && sel.value) onPersonDeviceChange();
 }
 
-init();
+checkLogin();
 </script>
 </body>
 </html>
