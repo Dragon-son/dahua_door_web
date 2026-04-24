@@ -101,13 +101,13 @@ pip install flask requests pillow
 [
   {
     "id": 1,
-    "name": "传动轴大厅",
-    "ip": "10.112.5.26",
+    "name": "示例门禁1",
+    "ip": "192.0.2.10",
     "port": 37777,
-    "username": "admin",
-    "password": "your-password",
-    "area": "传动轴",
-    "note": ""
+    "username": "user_01",
+    "password": "***",
+    "area": "示例区域A",
+    "note": "示例备注"
   }
 ]
 ```
@@ -116,11 +116,9 @@ pip install flask requests pillow
 
 ```json
 [
-  "传动轴",
-  "部件",
-  "底零",
-  "精铸",
-  "车轮"
+  "示例区域A",
+  "示例区域B",
+  "示例区域C"
 ]
 ```
 
@@ -213,10 +211,10 @@ http://你的服务器IP:15001/
 curl -X POST http://127.0.0.1:15001/api/open \
   -H 'Content-Type: application/json' \
   -d '{
-    "device_ip": "10.112.5.26",
+    "device_ip": "192.0.2.10",
     "device_port": 37777,
-    "username": "admin",
-    "password": "your-password",
+    "username": "user_01",
+    "password": "***",
     "channel": 0
   }'
 ```
@@ -249,9 +247,9 @@ curl -X POST http://127.0.0.1:15001/api/open \
 
 ```bash
 python3 access2.py \
-  --device-ip 10.112.5.26 \
+  --device-ip 192.0.2.10 \
   --device-port 37777 \
-  --username admin \
+  --username user_01 \
   --password your-password \
   open 0
 ```
