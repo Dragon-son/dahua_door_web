@@ -1,176 +1,308 @@
-# dahua_door_web
+# Dahua Door Web
 
-一个基于 **Flask + Dahua NetSDK / CGI** 的大华门禁 Web 管理系统。
+> 一个基于 **Flask + Dahua NetSDK + HTTP Digest CGI** 的大华门禁 Web 管理系统。  
+> 用一个本地网页控制台，统一完成 **设备管理、远程开门、人员管理、人脸下发、批量导入、日志查询**。
 
-它提供一个本地网页后台，用来统一管理门禁设备、远程开门、人员与人脸信息、批量导入和开门日志查询。前端为单页应用 `access_control.html`，后端由 `server.py` 提供 API，并通过 `device_client.py` / `DeviceManager` 调用大华设备能力。
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
+![Flask](https://img.shields.io/badge/Flask-Web%20API-black)
+![Platform](https://img.shields.io/badge/Platform-Linux-green)
+![Status](https://img.shields.io/badge/Status-Internal%20Project-orange)
 
-> 当前仓库为**脱敏后的可发布示例版本**：示例数据与配置已做匿名化处理，运行时生成的数据文件默认被 `.gitignore` 忽略。
+## ✨ 项目亮点
 
-## 功能特性
+- **一套 Web 控制台** 管设备、人员、人脸、日志，不用每次都手动跑脚本
+- **支持远程开门**，可直接对指定设备通道执行开门操作
+- **设备按用户隔离管理**，不同账号拥有各自的设备清单和区域配置
+- **公共人员库** 统一维护人员资料，支持跨设备关联
+- **支持 Excel + 图片批量导入**，适合批量录入门禁人员
+- **底层同时接入 NetSDK 与 CGI**，覆盖门禁与人脸相关能力
+- **连接池复用** 设备登录状态，减少频繁登录设备的开销
 
-- 🚪 **门禁控制**
-  - 按区域展示设备
-  - 进入设备详情后可一键远程开门
-  - 支持按日期区间查询设备开门日志
-  - 展示时间、门、用户 ID、姓名、开门方式、状态等信息
+## 📸 界面预览
 
-- 📡 **设备管理**
-  - 支持新增、编辑、删除门禁设备
-  - 设备按用户隔离存储，每个账号维护自己的设备清单
-  - 自动检测设备 TCP 连通状态
-  - 通过全局 `device_map.json` 为同一 `IP:Port` 分配统一设备 ID
+当前仓库未附带页面截图。建议后续补充：
 
-- 👥 **人员管理**
-  - 添加人员
-  - 删除人员
-  - 按用户 ID 精确查询设备内人员
-  - 按姓名关键字模糊搜索
-  - 分页获取设备内全部人员
-  - 公共 `persons.json` 保存人员主数据，并记录关联设备 ID
+- 登录页
+- 设备管理页
+- 人员管理页
+- 开门日志页
 
-- 🙂 **人脸管理**
-  - 上传人脸图片并下发到设备
-  - 删除指定用户人脸
-  - 人脸上传通过 CGI 接口完成
-
-- 📥 **批量导入**
-  - 支持上传包含 `user.xlsx` 和人脸图片的文件夹
-  - 解析 Excel 后批量向多个设备添加人员
-  - 可同时批量下发人脸
-  - 返回逐条导入结果统计
-
-- 🔐 **登录与注册**
-  - 支持账号注册、登录、退出
-  - 使用 Flask Session + Cookie 维持登录状态
-  - 用户数据目录按账号隔离到 `data/<username>/`
-
-- ♻️ **连接复用**
-  - `DeviceManager` 维护设备连接池
-  - `DeviceClient` 复用 Dahua SDK 登录连接
-  - 空闲连接自动清理，减少重复登录开销
-
-## 项目结构
+你可以把截图放到例如：
 
 ```text
-dahua_door_web/
-├── server.py              # Flask 服务入口，静态页面与 API
-├── access_control.html    # 前端单页界面
-├── device_manager.py      # 设备连接池管理
-├── device_client.py       # 设备 SDK / CGI 操作封装
-├── access2.py             # 命令行版门禁操作脚本
-├── README.md
-├── .gitignore
-│
-├── areas.json             # 示例区域数据（脱敏）
-├── devices.json           # 示例设备数据（脱敏）
-├── device_map.json        # 示例全局设备ID映射（脱敏）
-├── persons.json           # 示例人员数据（脱敏）
-├── users.json             # 示例账号数据（脱敏）
-├── user.xlsx              # 示例导入模板（脱敏）
-│
-└── data/
-    └── <username>/
-        ├── areas.json     # 某个账号自己的区域列表
-        └── devices.json   # 某个账号自己的设备列表
+assets/
+├── login.png
+├── devices.png
+├── persons.png
+└── logs.png
 ```
 
-## 运行环境
+然后在 README 中加入：
 
-建议使用 **Python 3.10+**。
+```md
+![登录页](assets/login.png)
+![设备管理](assets/devices.png)
+```
 
-主要依赖：
+## 🧭 目录
 
-- `Flask`
-- `Werkzeug`
+- [功能概览](#-功能概览)
+- [适用场景](#-适用场景)
+- [项目结构](#-项目结构)
+- [技术架构](#-技术架构)
+- [核心能力说明](#-核心能力说明)
+- [运行环境](#-运行环境)
+- [快速开始](#-快速开始)
+- [API 概览](#-api-概览)
+- [请求示例](#-请求示例)
+- [Excel 批量导入说明](#-excel-批量导入说明)
+- [命令行工具](#-命令行工具)
+- [安全说明](#-安全说明)
+- [后续优化方向](#-后续优化方向)
+- [License](#-license)
+
+## 🚀 功能概览
+
+### 1. 账号与数据隔离
+
+- 支持注册、登录、退出
+- 使用 `session` + `auth` Cookie 维持登录状态
+- 每个登录账号拥有独立的：
+  - `data/<username>/devices.json`
+  - `data/<username>/areas.json`
+
+### 2. 门禁设备管理
+
+- 新增设备
+- 编辑设备
+- 删除设备
+- 按区域归类管理
+- 自动检测设备在线状态
+- 使用 `device_map.json` 为同一 `IP:Port` 维护全局设备 ID
+
+### 3. 远程开门
+
+- 通过 Dahua NetSDK 对指定门禁设备发起远程开门
+- 支持传入 `channel`
+
+### 4. 人员管理
+
+- 添加人员
+- 删除人员
+- 按用户 ID 精确查询
+- 按姓名关键字模糊搜索
+- 分页查询设备内全部人员
+
+### 5. 人脸管理
+
+- 上传并下发人脸图片
+- 删除指定用户的人脸数据
+- 使用 HTTP CGI + Digest 认证调用设备接口
+
+### 6. 公共人员库
+
+- `persons.json` 维护公共人员资料
+- 同一人员可以关联多个设备 ID
+- 记录姓名、有效期、状态、人脸状态等信息
+
+### 7. 批量导入
+
+- 上传 `user.xlsx`
+- 搭配多张人脸图片一起导入
+- 根据 Excel 中的门名称自动匹配目标设备
+- 返回逐条处理明细
+
+### 8. 开门日志查询
+
+- 按时间范围查询日志
+- 返回时间、门号、用户 ID、姓名、开门方式、结果状态
+- 自动将设备 UTC 时间转换为东八区时间
+
+### 9. 设备连接复用
+
+- `DeviceManager` 维护连接池
+- 避免每次请求都重复登录设备
+- 空闲连接自动清理
+
+## 🎯 适用场景
+
+这个项目比较适合：
+
+- 工厂 / 园区 / 办公区门禁管理
+- 内网值班电脑或门卫室使用
+- 局域网内的轻量门禁控制后台
+- 需要批量录入人员与人脸的场景
+- 需要快速做一个本地可用的大华门禁管理界面
+
+## 📁 项目结构
+
+```text
+/vol2/1000/hdd/dahua/door_web
+├── server.py             # Flask 服务入口，提供 API 与静态页面
+├── access_control.html   # 单页前端管理界面
+├── device_manager.py     # 设备连接池与空闲清理
+├── device_client.py      # Dahua SDK / CGI 操作封装
+├── access2.py            # 命令行版门禁操作工具
+├── README.md             # 项目说明文档
+├── users.json            # 登录账号与密码哈希
+├── persons.json          # 公共人员资料库
+├── device_map.json       # 全局设备 ID 映射（IP:Port -> ID）
+├── user.xlsx             # 批量导入模板
+├── data/                 # 各登录用户独立的数据目录
+│   └── <username>/
+│       ├── devices.json  # 当前用户的设备列表
+│       └── areas.json    # 当前用户的区域列表
+└── __pycache__/          # Python 缓存
+```
+
+## 🏗 技术架构
+
+### 后端技术栈
+
+- Python 3
+- Flask
+- Werkzeug Security（密码哈希）
+- openpyxl（Excel 解析）
+- requests + HTTP Digest Auth（设备 CGI）
+- Pillow（图片处理/压缩）
+- Dahua NetSDK Python 绑定
+
+### 前端技术栈
+
+- 原生 HTML / CSS / JavaScript
+- 单页管理界面
+- 深色控制台风格 UI
+- 由 Flask 直接托管静态页面
+
+### 设备通信方式
+
+项目通过两种方式与设备交互：
+
+#### NetSDK
+
+用于：
+
+- 设备登录
+- 远程开门
+- 人员增删查
+- 日志查询
+
+#### HTTP CGI + Digest 认证
+
+用于：
+
+- 人脸上传
+- 人脸删除
+
+## 🧠 核心能力说明
+
+### `server.py`
+
+主服务入口，负责：
+
+- 用户注册 / 登录 / 登出
+- 登录态校验
+- 用户私有设备与区域管理
+- 公共人员库维护
+- Excel 批量导入
+- 调用 `DeviceManager` 执行门禁操作
+- 健康检查接口
+- 托管 `access_control.html`
+
+默认监听：
+
+- `0.0.0.0:15001`
+
+### `device_manager.py`
+
+负责设备连接池：
+
+- 用 `ip:port` 作为池 key
+- 懒加载创建 `DeviceClient`
+- 超时后自动关闭空闲连接
+
+### `device_client.py`
+
+设备操作核心封装层，主要提供：
+
+- `open_door(channel=0)`
+- `add_user(user_id, name)`
+- `delete_user(user_id)`
+- `get_user_by_id(user_id)`
+- `get_users_paginated(offset, limit)`
+- `search_users_by_name(keyword)`
+- `add_face(user_id, path)`
+- `delete_face(user_id)`
+- `query_log(start, end)`
+
+### `access2.py`
+
+独立命令行工具，适合脚本化或运维调试：
+
+- 开门
+- 添加人员
+- 查询人员
+- 删除人员
+- 下发人脸
+- 删除人脸
+- 查询日志
+
+## 💻 运行环境
+
+建议环境：
+
+- Python 3.10+
+- Linux
+- 已正确安装并可导入 Dahua `NetSDK`
+
+基础 Python 依赖包括：
+
+- `flask`
 - `requests`
-- `Pillow`
+- `pillow`
 - `openpyxl`
-- Dahua `NetSDK` Python 绑定 / 封装
+- `werkzeug`
 
-> 注意：`NetSDK` 通常不是直接通过 PyPI 安装的普通依赖。运行前需要确保以下模块在 Python 环境中可导入：
->
-> - `NetSDK.NetSDK`
-> - `NetSDK.SDK_Callback`
-> - `NetSDK.SDK_Struct`
-> - `NetSDK.SDK_Enum`
-
-## 快速开始
-
-### 1. 克隆仓库
+安装示例：
 
 ```bash
-git clone https://github.com/Dragon-son/dahua_door_web.git
-cd dahua_door_web
+pip install flask requests pillow openpyxl werkzeug
 ```
 
-### 2. 创建虚拟环境
+> 注意：`NetSDK` 不是普通的 PyPI 依赖，必须提前准备好大华 SDK 对应的 Python 模块和运行库。
+
+## ⚡ 快速开始
+
+### 1. 进入项目目录
+
+```bash
+cd /vol2/1000/hdd/dahua/door_web
+```
+
+### 2. 创建或激活虚拟环境
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+pip install flask requests pillow openpyxl werkzeug
 ```
 
-### 3. 安装基础依赖
+### 3. 确认 NetSDK 可导入
 
-```bash
-pip install flask requests pillow openpyxl
-```
+请确认以下模块存在：
 
-### 4. 准备 NetSDK
+- `NetSDK.NetSDK`
+- `NetSDK.SDK_Callback`
+- `NetSDK.SDK_Struct`
+- `NetSDK.SDK_Enum`
 
-请确认当前运行环境已正确放置 Dahua SDK 的 Python 绑定文件，能够正常导入：
-
-```python
-from NetSDK.NetSDK import NetClient
-from NetSDK.SDK_Callback import fDisConnect, fHaveReConnect
-from NetSDK.SDK_Struct import *
-from NetSDK.SDK_Enum import *
-```
-
-如果这些模块不在当前项目目录中，请提前配置 `PYTHONPATH` 或将 SDK Python 包放入可导入路径。
-
-### 5. 配置设备与区域
-
-实际运行时，推荐先注册账号，再通过 Web 页面维护设备与区域。
-
-如果你希望预置数据，可参考以下示例结构。
-
-#### 示例设备配置
-
-```json
-[
-  {
-    "id": 1,
-    "name": "示例门禁1",
-    "ip": "192.0.2.10",
-    "port": 37777,
-    "username": "user_01",
-    "password": "***",
-    "area": "示例区域A",
-    "note": "示例备注"
-  }
-]
-```
-
-#### 示例区域配置
-
-```json
-[
-  "示例区域A",
-  "示例区域B",
-  "示例区域C"
-]
-```
-
-### 6. 启动服务
-
-默认端口为 `15001`：
+### 4. 启动服务
 
 ```bash
 python3 server.py
 ```
 
-指定端口启动：
+或指定端口：
 
 ```bash
 python3 server.py --port 15001
@@ -182,54 +314,15 @@ python3 server.py --port 15001
 http://127.0.0.1:15001/
 ```
 
-如需局域网访问，可使用：
+若需要局域网访问：
 
 ```text
-http://你的服务器IP:15001/
+http://服务器IP:15001/
 ```
 
-## 数据存储说明
+## 🔌 API 概览
 
-当前版本同时包含两类数据：
-
-### 1. 公共数据文件
-
-位于项目根目录：
-
-- `persons.json`：公共人员主数据
-- `users.json`：登录账号数据
-- `device_map.json`：`IP:Port -> 全局设备ID` 映射
-
-### 2. 按用户隔离的数据
-
-位于 `data/<username>/` 目录：
-
-- `devices.json`：该账号自己的设备清单
-- `areas.json`：该账号自己的区域列表
-
-也就是说：
-
-- **账号、人员主表、全局设备映射** 是公共的
-- **设备清单、区域列表** 是按登录用户隔离的
-
-## 前端界面
-
-前端页面文件为 `access_control.html`，由 Flask 直接静态托管。
-
-主要页面模块：
-
-- 门禁控制
-- 设备管理
-- 人员管理
-- 登录 / 注册界面
-- 区域管理弹窗
-- 批量导入结果弹窗
-
-界面风格为深色控制台风格，适合在内网管理场景中直接使用。
-
-## API 概览
-
-后端统一返回结构：
+统一返回格式：
 
 ```json
 {
@@ -239,7 +332,7 @@ http://你的服务器IP:15001/
 }
 ```
 
-失败时：
+错误格式：
 
 ```json
 {
@@ -248,65 +341,103 @@ http://你的服务器IP:15001/
 }
 ```
 
-### 公开接口
+### 健康检查
 
-- `POST /api/register` 注册账号
-- `POST /api/login` 登录
-- `POST /api/logout` 退出登录
-- `GET /api/user` 获取当前登录用户
-- `GET /api/health` 健康检查
-- `GET /` 前端页面
-- `GET /download/template` 下载批量导入模板
+- `GET /api/health`
+
+### 认证相关
+
+- `POST /api/register`
+- `POST /api/login`
+- `POST /api/logout`
+- `GET /api/user`
 
 ### 设备管理
 
-- `GET /api/devices` 获取设备列表
-- `POST /api/devices` 新增设备
-- `PUT /api/devices/<device_id>` 更新设备
-- `DELETE /api/devices/<device_id>` 删除设备
+- `GET /api/devices`
+- `POST /api/devices`
+- `PUT /api/devices/<device_id>`
+- `DELETE /api/devices/<device_id>`
 
 ### 区域管理
 
-- `GET /api/areas` 获取区域列表
-- `POST /api/areas` 新增区域
-- `DELETE /api/areas/<name>` 删除区域
+- `GET /api/areas`
+- `POST /api/areas`
+- `DELETE /api/areas/<name>`
 
 ### 公共人员库
 
-- `GET /api/persons` 获取人员列表
-- `POST /api/persons/import` 导入人员到公共库并关联设备
-- `PUT /api/persons/<user_id>` 更新人员信息
-- `DELETE /api/persons/<user_id>` 删除人员
-- `DELETE /api/persons/<user_id>/devices/<device_id>` 取消某人员与某设备的关联
+- `GET /api/persons`
+- `POST /api/persons/import`
+- `PUT /api/persons/<user_id>`
+- `DELETE /api/persons/<user_id>`
+- `DELETE /api/persons/<user_id>/devices/<device_id>`
 
-### 设备级操作
+### 批量导入
 
-以下接口会读取设备连接信息：
+- `POST /api/batch_import`
+
+### 设备操作
+
+这些接口会从 **JSON Body / Form Data / Query 参数** 中提取设备连接信息：
 
 - `device_ip`
 - `device_port`（默认 `37777`）
 - `username`
 - `password`
 
-这些信息可以来自：
+对应接口：
 
-- JSON Body
-- Form Data
-- Query 参数
+- `POST /api/open`
+- `POST /api/user`
+- `DELETE /api/user/<uid>`
+- `GET /api/device/user/id/<uid>`
+- `GET /api/device/users/search?keyword=xxx`
+- `GET /api/device/users/all?page=1&page_size=20`
+- `POST /api/face/<uid>`
+- `DELETE /api/face/<uid>`
+- `GET /api/log?start=2026-04-01&end=2026-04-30`
 
-具体接口包括：
+## 🧪 请求示例
 
-- `POST /api/open` 远程开门
-- `POST /api/user` 添加人员到设备
-- `DELETE /api/user/<uid>` 从设备删除人员
-- `GET /api/device/user/id/<uid>` 查询设备内指定人员
-- `GET /api/device/users/search?keyword=xxx` 按姓名搜索设备人员
-- `GET /api/device/users/all?page=1&page_size=20` 分页查询设备全部人员
-- `POST /api/face/<uid>` 上传并下发人脸
-- `DELETE /api/face/<uid>` 删除人脸
-- `GET /api/log?start=2026-04-01&end=2026-04-30` 查询日志
+### 注册
 
-## 接口调用示例
+```bash
+curl -X POST http://127.0.0.1:15001/api/register \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "username": "admin",
+    "password": "123456"
+  }'
+```
+
+### 登录
+
+```bash
+curl -X POST http://127.0.0.1:15001/api/login \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "username": "admin",
+    "password": "123456"
+  }'
+```
+
+### 新增设备
+
+```bash
+curl -X POST http://127.0.0.1:15001/api/devices \
+  -H 'Content-Type: application/json' \
+  -b 'auth=admin' \
+  -d '{
+    "name": "示例门禁1",
+    "ip": "192.0.2.10",
+    "port": 37777,
+    "username": "user_01",
+    "password": "***",
+    "area": "示例区域A",
+    "note": "测试设备"
+  }'
+```
 
 ### 远程开门
 
@@ -322,60 +453,53 @@ curl -X POST http://127.0.0.1:15001/api/open \
   }'
 ```
 
-### 添加设备
+### 添加设备用户
 
 ```bash
-curl -X POST http://127.0.0.1:15001/api/devices \
+curl -X POST http://127.0.0.1:15001/api/user \
   -H 'Content-Type: application/json' \
-  -b cookie.txt -c cookie.txt \
   -d '{
-    "name": "示例门禁1",
-    "ip": "192.0.2.10",
-    "port": 37777,
+    "device_ip": "192.0.2.10",
+    "device_port": 37777,
     "username": "user_01",
     "password": "***",
-    "area": "示例区域A",
-    "note": "示例备注"
+    "user_id": "U000001",
+    "name": "示例用户"
   }'
 ```
 
-### 查询设备内人员
+### 查询日志
 
 ```bash
-curl "http://127.0.0.1:15001/api/device/user/id/U000001?device_ip=192.0.2.10&device_port=37777&username=user_01&password=***"
+curl 'http://127.0.0.1:15001/api/log?device_ip=192.0.2.10&device_port=37777&username=user_01&password=***&start=2026-04-01&end=2026-04-30'
 ```
 
-## 批量导入说明
+## 📥 Excel 批量导入说明
 
-`POST /api/batch_import` 支持上传文件夹内容，后端会：
+批量导入接口会：
 
-1. 查找 `user.xlsx`
-2. 解析第二行为表头的数据区
-3. 读取 `用户编号`、`姓名`、`有效期结束`、`人脸图片名称`、`门` 等字段
-4. 根据门名称匹配当前登录用户名下的设备
-5. 批量调用设备接口添加人员
-6. 若图片存在，则继续下发人脸
-7. 返回总数、成功数、失败数、人脸成功数、人脸失败数及逐条结果
+1. 接收多个上传文件
+2. 找到其中的 `user.xlsx`
+3. 读取第二行作为表头
+4. 校验必填列：
+   - `用户编号`
+   - `姓名`
+5. 识别可选列：
+   - `有效期结束`
+   - `人脸图片名称`
+   - `门`
+6. 根据门名称匹配当前用户设备
+7. 逐台设备执行人员添加
+8. 如果图片存在，则继续做人脸下发
+9. 返回逐条导入结果明细
 
-相关辅助接口：
+模板下载接口：
 
-- `GET /download/template` 下载导入模板
+- `GET /download/template`
 
-## 命令行脚本
+## 🛠 命令行工具
 
-项目同时包含命令行工具 `access2.py`，可直接对单个设备执行操作。
-
-支持命令：
-
-- `open [门号]`
-- `adduser <ID> <姓名>`
-- `getuser <ID>`
-- `deluser <ID>`
-- `face <ID> <图片路径> [max_kb] [宽] [高] [质量]`
-- `dface <ID>`
-- `log <开始日期> [结束日期]`
-
-示例：
+`access2.py` 支持直接操作指定设备：
 
 ```bash
 python3 access2.py \
@@ -386,47 +510,64 @@ python3 access2.py \
   open 0
 ```
 
-## 安全说明
+更多示例：
 
-**请不要把真实设备密码、真实人员信息、真实内网 IP 直接提交到公开仓库。**
+```bash
+# 添加人员
+python3 access2.py --device-ip 192.0.2.10 --device-port 37777 --username user_01 --password '***' adduser U000001 示例用户
 
-建议：
+# 查询人员
+python3 access2.py --device-ip 192.0.2.10 --device-port 37777 --username user_01 --password '***' getuser U000001
 
-1. 将真实设备信息移出版本库
-2. 使用环境变量、私有配置文件或部署时挂载配置
-3. 为公开仓库保留匿名化示例数据
-4. 提交前检查 `devices.json`、`persons.json`、`users.json`、`user.xlsx`、`data/` 等文件
-5. 如果敏感数据已经推送到公开仓库，单纯再提交一版脱敏文件**并不能清除历史泄露**，应考虑重写 Git 历史并及时更换密码
+# 删除人员
+python3 access2.py --device-ip 192.0.2.10 --device-port 37777 --username user_01 --password '***' deluser U000001
 
-当前仓库的 `.gitignore` 已默认忽略：
+# 上传人脸
+python3 access2.py --device-ip 192.0.2.10 --device-port 37777 --username user_01 --password '***' face U000001 ./face.jpg
 
-- `persons.json`
-- `users.json`
-- `user.xlsx`
-- `data/`
-- `__pycache__/`
-- `*.pyc`
-- `*.log`
-- `.env`
+# 删除人脸
+python3 access2.py --device-ip 192.0.2.10 --device-port 37777 --username user_01 --password '***' dface U000001
 
-## 已知限制
+# 查询日志
+python3 access2.py --device-ip 192.0.2.10 --device-port 37777 --username user_01 --password '***' log 2026-04-01 2026-04-30
+```
 
-- 依赖本地 Dahua NetSDK 环境，无法仅靠纯 PyPI 依赖直接运行
-- 当前数据存储为本地 JSON 文件，不是数据库
-- 登录功能为轻量级本地账号体系，适合内网部署
-- Flask `secret_key` 当前写在示例代码中，生产环境建议改为环境变量
-- 设备级接口目前仍允许调用方直接传入设备 IP/账号密码，生产部署时建议进一步收敛为仅从已保存设备中选择
+## 🔐 安全说明
 
-## 后续可改进方向
+这个项目会接触比较敏感的信息，比如：
 
-- [ ] 增加 `requirements.txt`
-- [ ] 增加环境变量配置支持
-- [ ] 将 `secret_key`、设备凭据等敏感配置移出代码
-- [ ] 引入数据库替代部分 JSON 文件
-- [ ] 增加更细粒度的权限控制与审计日志
-- [ ] 增加自动化测试与部署说明
-- [ ] 增加 README 页面截图与更完整的接口示例
+- 门禁设备 IP
+- 设备账号密码
+- 人员姓名与编号
+- 人脸图片
+- 登录账号数据
 
-## License
+因此建议：
 
-暂未添加 License。如需开源发布，建议补充 MIT / Apache-2.0 等许可证。
+1. **不要把真实设备密码提交到公开仓库**
+2. 将设备敏感配置改成本地私有文件或环境变量
+3. 公开演示时对 JSON、Excel、截图做脱敏处理
+4. 为 `users.json`、`persons.json`、`data/` 做备份与权限控制
+5. 生产环境中把 `secret_key` 从源码移出
+6. 增加更细粒度的权限控制与审计日志
+
+## 📝 后续优化方向
+
+- [ ] 补充 `requirements.txt`
+- [ ] 增加 `.env` / 配置文件模板
+- [ ] 将敏感配置彻底移出源码
+- [ ] 增加部署文档（systemd / Docker）
+- [ ] 增加接口测试与单元测试
+- [ ] 增加前端截图与操作流程图
+- [ ] 优化 Excel 导入错误提示与回滚策略
+- [ ] 增加数据库支持，替代部分本地 JSON 存储
+
+## 📄 License
+
+当前仓库未附带明确 License。
+
+如果你准备公开发布，建议补充：
+
+- MIT
+- Apache-2.0
+- 或企业内部使用说明
