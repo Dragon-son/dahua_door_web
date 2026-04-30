@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大华门禁管理系统</title>
+<link href="css/access_control.css" rel="stylesheet" type="text/css" media="all"/>
+<link href="css/preview.css" rel="stylesheet" type="text/css" media="all"/>
+</head>
+<body>
+<div id="login-page" class="login-container">
+  <div class="login-card">
+    <h2>🔐 门禁管理系统</h2>
+    <div id="login-form">
+      <div class="form-row"><input type="text" id="login-username" placeholder="用户名"></div>
+      <div class="form-row"><input type="password" id="login-password" placeholder="密码" onkeyup="if(event.key==='Enter') doLogin()"></div>
+      <button class="btn btn-primary" onclick="doLogin()">登录</button>
+      <p style="margin-top:12px;color:var(--text3);">没有账号？<a href="#" onclick="showRegisterForm()">注册</a></p>
+    </div>
+    <div id="register-form" style="display:none;">
+      <div class="form-row"><input type="text" id="reg-username" placeholder="用户名"></div>
+      <div class="form-row"><input type="password" id="reg-password" placeholder="密码"></div>
+      <div class="form-row"><input type="password" id="reg-password2" placeholder="确认密码" onkeyup="if(event.key==='Enter') doRegister()"></div>
+      <button class="btn btn-primary" onclick="doRegister()">注册</button>
+      <p style="margin-top:12px;color:var(--text3);"><a href="#" onclick="showLoginForm()">返回登录</a></p>
+    </div>
+    <div id="login-msg" style="color:var(--red2);margin-top:10px;font-size:13px;"></div>
+  </div>
+</div>
+
+<div id="main-app" style="display:none;">
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">🔐</div>
+      <div><div class="logo-text">门禁管理系统</div><div class="logo-sub">Dahua Access Control</div></div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-label">功能模块</div>
+    <div class="nav-item active" onclick="showPage('access')"><span class="nav-icon">🚪</span> 门禁控制</div>
+    <div class="nav-item" onclick="showPage('devices')"><span class="nav-icon">📡</span> 设备管理</div>
+    <div class="nav-item" onclick="showPage('persons')"><span class="nav-icon">👥</span> 人员管理</div>
+    <div class="nav-item admin-only" id="nav-admin" style="display:none" onclick="showPage('admin')"><span class="nav-icon">🛡️</span> 用户管理</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="status-dot" id="srvDot"></div>
+    <span id="srvLabel">连接中…</span>
+    <button class="btn btn-ghost btn-sm" onclick="doLogout()" style="margin-left:auto;">登出</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="breadcrumb" id="breadcrumb"><span>门禁控制</span></div>
+    <div class="topbar-actions" id="topbarActions"></div>
+  </div>
+  <div class="content">
+
+    <!-- 门禁控制页面 -->
+    <div class="page active" id="page-access">
+      <div class="conn-banner" id="banner-access">⚠️ 无法连接后端服务，请联系管理员</div>
+      <div id="access-list">
+        <div id="access-areas-container"></div>
+      </div>
+      <div id="access-detail" class="device-detail">
+        <button class="back-btn" onclick="showAccessList()">← 返回设备列表</button>
+        <div class="open-door-card">
+          <div id="doorStatusIcon" style="font-size:28px;margin-bottom:4px">🔒</div>
+          <div id="doorStatusText" style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--accent)">门已关</div>
+          <h3 id="detail-name">设备名称</h3>
+          <p id="detail-ip" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text3);margin-bottom:4px"></p>
+          <!-- ★ 预览按钮 + 开门按钮并排 -->
+          <div style="display:flex;gap:12px;justify-content:center;margin-top:8px;flex-wrap:wrap;">
+            <button class="btn btn-preview" id="previewBtn" onclick="openPreview(currentDev)">📹 &nbsp; 实时预览</button>
+            <button class="btn btn-open" id="openDoorBtn" onclick="doOpenDoor()">🔓 &nbsp; 远程开门</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="sec-hd" style="margin-bottom:14px">
+    			<div class="card-title" style="margin-bottom:0">开门记录</div>
+    			<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      		  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" placeholder="搜索人员…" id="logSearch" oninput="filterLog()"></div>
+       			 <input type="date" id="logEnd" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:var(--radius);font-size:13px;width:140px;">
+       			 <button class="btn btn-ghost btn-sm" onclick="fetchLog()">↻ 查询</button>
+    			</div>
+			  </div>
+          <div class="table-wrap">
+            <table><thead><tr><th>时间</th><th>用户ID</th><th>姓名</th><th>方式</th><th>状态</th></tr></thead><tbody id="logBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 设备管理页面 -->
+    <div class="page" id="page-devices">
+      <div class="conn-banner" id="banner-devices">⚠️ 无法连接后端服务，请联系管理员</div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num" id="stat-total">—</div><div class="stat-label">设备总数</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--accent)" id="stat-online">—</div><div class="stat-label">在线设备</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--red2)" id="stat-offline">—</div><div class="stat-label">离线设备</div></div>
+      </div>
+      <div class="sec-hd">
+        <h2>设备列表</h2>
+        <div class="sec-actions">
+          <div class="search-bar"><span class="search-icon">🔍</span><input type="text" placeholder="搜索设备…" id="devSearchInput" oninput="filterDevices(this.value)"></div>
+          <button class="btn btn-primary admin-only" id="btn-add-device" onclick="openDeviceModal()">+ 添加设备</button>
+          <button class="btn btn-ghost admin-only" id="btn-manage-area" onclick="openAreaModal()">🗂️ 区域管理</button>
+          <button class="btn btn-ghost" onclick="refreshDevices()">↻ 刷新</button>
+        </div>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table><thead><tr><th>名称</th><th>IP 地址</th><th>端口</th><th>账号</th><th>区域</th><th>状态</th><th>操作</th></tr></thead><tbody id="devBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 人员管理页面 -->
+    <div class="page" id="page-persons">
+      <div class="conn-banner" id="banner-persons">⚠️ 无法连接后端服务，请联系管理员</div>
+      <div class="device-picker">
+        <label>选择设备：</label>
+        <select class="form-select" id="personDevSel" onchange="onPersonDeviceChange()" style="max-width:280px;width:auto"><option value="">-- 请选择设备 --</option></select>
+        <span id="personDevBadge" style="margin-left:4px"></span>
+      </div>
+      <div id="personContent" style="display:none">
+        <div class="sec-hd">
+          <h2>人员列表</h2>
+          <div class="sec-actions" style="flex-wrap:wrap;gap:8px;">
+            <div class="search-bar" style="max-width:160px;"><span class="search-icon">🆔</span><input type="text" placeholder="用户ID" id="searchUserId" onkeyup="if(event.key==='Enter') searchById()"></div>
+            <div class="search-bar" style="max-width:160px;"><span class="search-icon">👤</span><input type="text" placeholder="姓名" id="searchUserName" onkeyup="if(event.key==='Enter') searchByName()"></div>
+            <button class="btn btn-blue btn-sm" onclick="searchById()">🔍 查ID</button>
+            <button class="btn btn-blue btn-sm" onclick="searchByName()">🔍 查姓名</button>
+            <button class="btn btn-blue btn-sm" onclick="showAllLocalPersons()">📋 返回</button>
+            <button class="btn btn-blue btn-sm" onclick="loadAllDeviceUsers()">📥 同步设备人员</button>
+            <button class="btn btn-primary" onclick="openPersonModal()">+ 添加人员</button>
+            <button class="btn btn-primary" onclick="downloadTemplate()">📥 下载模板</button>
+            <button class="btn btn-primary" onclick="document.getElementById('batchFolderInput').click()">📂 批量导入</button>
+            <input type="file" id="batchFolderInput" webkitdirectory style="display:none" onchange="handleBatchFolder(this.files)">
+          </div>
+        </div>
+        <div class="card" style="padding:0">
+          <div class="table-wrap">
+            <table style="min-width: 650px;">
+              <thead><tr><th>用户ID</th><th>姓名</th><th>有效期</th><th>状态</th><th>人脸</th><th>操作</th></tr></thead>
+              <tbody id="personBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:16px;">
+          <span style="color:var(--text3);font-size:13px;">共 <span id="personTotal">0</span> 条</span>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-ghost btn-sm" id="personPrevBtn" onclick="prevPersonPage()" disabled>上一页</button>
+            <span style="padding:4px 8px;color:var(--text2);font-size:13px;"><span id="personCurrentPage">1</span>/<span id="personTotalPages">1</span></span>
+            <button class="btn btn-ghost btn-sm" id="personNextBtn" onclick="nextPersonPage()" disabled>下一页</button>
+            <input type="number" id="personJumpPage" min="1" style="width:60px;padding:4px 6px;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);font-size:12px;" placeholder="页">
+            <button class="btn btn-ghost btn-sm" onclick="jumpPersonPage()">跳转</button>
+          </div>
+        </div>
+      </div>
+      <div id="personPH" class="empty-state"><div class="empty-icon">👆</div><p>请先选择设备查看人员</p></div>
+    </div>
+    <!-- 用户管理页面（仅管理员） -->
+    <div class="page" id="page-admin">
+      <div class="sec-hd">
+        <h2>用户管理</h2>
+        <div class="sec-actions">
+          <button class="btn btn-primary" onclick="openAdminUserModal()">+ 新建用户</button>
+          <button class="btn btn-ghost" onclick="loadAdminUsers()">↻ 刷新</button>
+        </div>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table><thead><tr><th>用户名</th><th>角色</th><th>已分配设备</th><th>操作</th></tr></thead><tbody id="adminUserBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+<!-- 设备模态框 -->
+<div class="modal-overlay" id="devModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="devModalTitle">添加设备</div><button class="modal-close" onclick="closeModal('devModal')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">设备名称 *</label><input class="form-input" id="d-name" placeholder=""></div>
+      <div class="form-row"><label class="form-label">IP 地址 *</label><input class="form-input" id="d-ip" placeholder=""></div>
+      <div class="form-row"><label class="form-label">端口 *</label><input class="form-input" id="d-port" type="number" placeholder="37777"></div>
+      <div class="form-row"><label class="form-label">区域</label><select class="form-select" id="d-area"></select></div>
+      <div class="form-row"><label class="form-label">账号 *</label><input class="form-input" id="d-user" placeholder=""></div>
+      <div class="form-row"><label class="form-label">密码 *</label><input class="form-input" id="d-pass" type="" placeholder=""></div>
+      <div class="form-row"><label class="form-label">备注</label><input class="form-input" id="d-note" placeholder="可选"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('devModal')">取消</button><button class="btn btn-primary" onclick="saveDevice()">保存设备</button></div>
+  </div>
+</div>
+
+<!-- 区域管理模态框 -->
+<div class="modal-overlay" id="areaModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">区域管理</div><button class="modal-close" onclick="closeModal('areaModal')">✕</button></div>
+    <div style="margin-bottom: 16px; display: flex; gap: 8px;">
+      <input type="text" id="newAreaName" class="form-input" placeholder="新区域名称" style="flex:1">
+      <button class="btn btn-primary" onclick="addArea()">添加</button>
+    </div>
+    <div class="table-wrap">
+      <table style="width:100%">
+        <thead><tr><th>区域名称</th><th>操作</th></tr></thead>
+        <tbody id="areaListBody"></tbody>
+      </table>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('areaModal')">关闭</button></div>
+  </div>
+</div>
+
+<!-- 人员模态框（多选设备） -->
+<div class="modal-overlay" id="personModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="personModalTitle">添加人员</div><button class="modal-close" onclick="closeModal('personModal')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">用户ID *</label><input class="form-input" id="p-id" placeholder="工号"></div>
+      <div class="form-row"><label class="form-label">姓名</label><input class="form-input" id="p-name" placeholder=""></div>
+      <div class="form-row" style="grid-column: span 2;" id="face-upload-row">
+        <label class="form-label">人脸照片</label>
+        <input class="form-input" id="p-face" type="file" accept="image/*" style="padding:6px 10px">
+        <div style="font-size:12px;color:var(--text3);margin-top:4px;">支持 jpg/png，建议 ≤ 100KB，保存后自动下发到设备</div>
+      </div>
+      <div class="form-row" style="grid-column: span 2; display:none;" id="face-hint-row">
+        <div style="padding:10px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:#e6a817;">
+          ⚠️ 本地没有当前人员照片，如果新增所属设备，请点击保存人员后上传照片
+        </div>
+      </div>
+      <div class="form-row" style="grid-column: span 2;">
+        <label class="form-label">所属设备 * (可多选)</label>
+        <div id="device-checkbox-list" style="max-height:180px;overflow-y:auto;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:10px;"></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px;">勾选设备即可添加人员</div>
+      </div>
+      <div class="form-row" style="grid-column: span 2;">
+        <label class="form-label">有效期截止</label>
+        <input class="form-input" id="p-end" type="date" value="2037-12-31">
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('personModal')">取消</button><button class="btn btn-primary" id="personSaveBtn" onclick="savePerson()">保存人员</button></div>
+  </div>
+</div>
+
+<!-- 有效期模态框 -->
+<div class="modal-overlay" id="validityModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">修改有效期</div><button class="modal-close" onclick="closeModal('validityModal')">✕</button></div>
+    <p style="font-size:13px;color:var(--text3);margin-bottom:16px">用户ID：<strong id="validityUid" style="color:var(--text)"></strong></p>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">开始日期</label><input class="form-input" id="validity-begin" type="date" value="2000-01-01"></div>
+      <div class="form-row"><label class="form-label">截止日期</label><input class="form-input" id="validity-end" type="date" value="2037-12-31"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('validityModal')">取消</button><button class="btn btn-primary" id="validitySaveBtn" onclick="submitValidityUpdate()">保存有效期</button></div>
+  </div>
+</div>
+
+<!-- 人脸模态框 -->
+<div class="modal-overlay" id="faceModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">录入人脸</div><button class="modal-close" onclick="closeModal('faceModal')">✕</button></div>
+    <p style="font-size:13px;color:var(--text3);margin-bottom:16px">用户ID：<strong id="faceUid" style="color:var(--text)"></strong></p>
+    <div class="form-row"><label class="form-label">选择图片 *</label><input class="form-input" id="faceFile" type="file" accept="image/*" style="padding:6px 10px"></div>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">缩放宽度（0=不缩放）</label><input class="form-input" id="face-w" type="number" value="0"></div>
+      <div class="form-row"><label class="form-label">缩放高度（0=不缩放）</label><input class="form-input" id="face-h" type="number" value="0"></div>
+      <div class="form-row"><label class="form-label">JPEG 质量（0=原图）</label><input class="form-input" id="face-q" type="number" value="0"></div>
+      <div class="form-row"><label class="form-label">最大100KB（0=不限）</label><input class="form-input" id="face-kb" type="number" value="0"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('faceModal')">取消</button><button class="btn btn-primary" id="faceBtn" onclick="submitFace()">下发人脸</button></div>
+  </div>
+</div>
+
+<!-- 管理员：新建/编辑用户模态框 -->
+<div class="modal-overlay" id="adminUserModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="adminUserModalTitle">新建用户</div><button class="modal-close" onclick="closeModal('adminUserModal')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">用户名 *</label><input class="form-input" id="au-username" placeholder="登录用户名"></div>
+      <div class="form-row"><label class="form-label">角色</label>
+        <select class="form-select" id="au-role">
+          <option value="user">普通用户</option>
+          <option value="admin">管理员</option>
+        </select>
+      </div>
+      <div class="form-row" style="grid-column:span 2"><label class="form-label">密码 *<span id="au-pass-hint" style="color:var(--text3);font-weight:400;margin-left:4px"></span></label><input class="form-input" id="au-password" type="password" placeholder="登录密码"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('adminUserModal')">取消</button><button class="btn btn-primary" id="adminUserSaveBtn" onclick="saveAdminUser()">保存</button></div>
+  </div>
+</div>
+
+<!-- 管理员：分配设备模态框 -->
+<div class="modal-overlay" id="assignDevModal">
+  <div class="modal" style="width:480px">
+    <div class="modal-header"><div class="modal-title">分配设备给 <span id="assignTargetUser" style="color:var(--accent2)"></span></div><button class="modal-close" onclick="closeModal('assignDevModal')">✕</button></div>
+    <p style="font-size:12.5px;color:var(--text3);margin-bottom:14px">勾选设备后点击保存，用户即可在其账号中看到这些设备并使用门禁功能。</p>
+    <div id="assignDevList" style="max-height:260px;overflow-y:auto;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:10px;"></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('assignDevModal')">取消</button><button class="btn btn-primary" id="assignDevSaveBtn" onclick="saveAssignDevices()">保存分配</button></div>
+  </div>
+</div>
+
+<!-- 确认模态框 -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" style="width:360px">
+    <div class="modal-header"><div class="modal-title" id="confirmTitle">确认操作</div><button class="modal-close" onclick="closeModal('confirmModal')">✕</button></div>
+    <p class="confirm-text" id="confirmText"></p>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="confirmCancel" onclick="closeModal('confirmModal')">取消</button>
+      <button class="btn btn-danger" id="confirmOk">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- ★ 视频预览模态框 -->
+<div class="modal-overlay" id="previewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="previewModalTitle">📹 实时预览</div>
+      <button class="modal-close" onclick="closePreview()">✕</button>
+    </div>
+    <!-- 视频画布区域 -->
+    <div class="preview-wrap">
+      <canvas id="previewCanvas"></canvas>
+      <div class="preview-overlay">
+        <div class="preview-topbar">
+          <span>
+            <span class="preview-status-dot"></span>
+            <span id="previewStatus">连接中…</span>
+          </span>
+        </div>
+        <div class="preview-bottombar">
+          <button class="preview-btn" onclick="togglePreviewFullscreen()">⛶ 全屏</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="margin-top:14px;">
+      <button class="btn btn-ghost" onclick="closePreview()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="tc"></div>
+</div>
+
+<!-- JSMpeg：WebSocket MPEG1 播放器 -->
+<script src="js/jsmpg.js"></script>
+<script src="js/access_control.js" type="text/javascript"></script>
+<script src="js/preview.js" type="text/javascript"></script>
+</body>
+</html>

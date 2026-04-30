@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "name": "示例门禁设备",
+    "ip": "127.0.0.1",
+    "port": 37777,
+    "username": "admin",
+    "password": "",
+    "area": "默认区域",
+    "note": "请复制为 devices.json 后填写真实设备信息，不要提交真实密码"
+  }
+]
